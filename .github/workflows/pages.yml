@@ -142,6 +142,19 @@ jobs:
           		</>''')
           p.write_text(s)
 
+          # 固定使用简体中文，并让底部导航适配不同屏幕宽度和安全区域
+          p = Path("packages/web/src/i18n/index.ts")
+          s = p.read_text().replace('supportedLngs: ["zh-CN", "zh-TW", "en-US"],', 'supportedLngs: ["zh-CN", "zh-TW", "en-US"],\\n\\t\\tlng: "zh-CN",')
+          p.write_text(s)
+
+          p = Path("packages/web/src/wechatComponents/BottomNavbar/index.tsx")
+          s = p.read_text()
+          s = s.replace('className="grid grid-cols-4 bg-[#f8f8f8]"', 'className="grid w-full shrink-0 grid-cols-4 items-stretch bg-[#f8f8f8] border-t border-black/5 pb-[env(safe-area-inset-bottom)]"')
+          s = s.replace('className="flex cursor-pointer flex-col items-center justify-center space-y-1 py-2"', 'className="flex min-w-0 cursor-pointer flex-col items-center justify-center gap-1 px-1 py-2 touch-manipulation"')
+          s = s.replace('className="h-7 w-7"', 'className="h-[clamp(23px,6vw,28px)] w-[clamp(23px,6vw,28px)]"')
+          s = s.replace('className={twJoin("text-xs",', 'className={twJoin("max-w-full truncate text-[clamp(11px,3vw,13px)] leading-tight",')
+          p.write_text(s)
+
           # 保留 Fake World 微信界面，移除默认演示联系人和聊天
           p = Path("packages/web/src/faker/wechat/user/consts.ts")
           s = p.read_text()
