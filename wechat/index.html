@@ -30,4 +30,8 @@ function showMoments(){ $('#head').classList.add('hidden');$('#nav').classList.a
 function drawMoments(){$('#posts').innerHTML=moments.map(m=>`<div class="post"><b>${safe(me.name)}</b><div style="margin-top:10px">${safe(m.text)}</div>${m.image?'<img src="'+m.image+'">':''}<div class="preview">${m.time}</div></div>`).join('')||'<div class="empty">还没有朋友圈</div>'}
 function newMoment(){showModal('<h3>发表朋友圈</h3><textarea id="mt" class="field" rows="4" placeholder="这一刻的想法..."></textarea><div class="upload"><label style="color:#07c160">添加图片<input id="mf" type="file" accept="image/*" hidden></label><img id="mp" style="display:none"></div><button class="primary" onclick="saveMoment()">发表</button>');$('#mf').onchange=e=>{let r=new FileReader();r.onload=()=>{$('#mp').src=r.result;$('#mp').style.display='block'};r.readAsDataURL(e.target.files[0])}}
 function saveMoment(){let t=$('#mt').value.trim(),im=$('#mp').src;if(!t&&!im)return;moments.unshift({text:t,image:im&&im!=='undefined'?im:'',time:now()});write('moments',moments);close();drawMoments()}
-render();\ndocument.getElementById('wxAdd').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();newPerson()});\ndocument.getElementById('wxSearch').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();search()});\nwindow.addFriend=newPerson;window.openWeChatAdd=newPerson;\n</script></body></html>
+render();
+document.getElementById('wxAdd').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();newPerson()});
+document.getElementById('wxSearch').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();search()});
+window.addFriend=newPerson;window.openWeChatAdd=newPerson;
+</script></body></html>
