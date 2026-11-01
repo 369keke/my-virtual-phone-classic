@@ -1,4 +1,4 @@
-name: Deploy static site to GitHub Pages
+name: Deploy static site and embedded Fake World WeChat to GitHub Pages
 
 on:
   push:
@@ -21,16 +21,69 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout phone project
         uses: actions/checkout@v4
+        with:
+          path: phone
+
+      - name: Checkout Fake World source
+        uses: actions/checkout@v4
+        with:
+          repository: LiangNiang/fake-world
+          ref: main
+          path: fake-world
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.1.3
+
+      - name: Configure Fake World for this Pages subpath
+        working-directory: fake-world
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("packages/web/vite.config.ts")
+          s = p.read_text()
+          s = s.replace('export default defineConfig({', 'export default defineConfig({\\n\\tbase: "/my-virtual-phone-classic/wechat/",')
+          p.write_text(s)
+          p = Path("packages/web/src/main.tsx")
+          s = p.read_text().replace('createBrowserRouter(routes)', 'createBrowserRouter(routes, { basename: "/my-virtual-phone-classic/wechat" })')
+          p.write_text(s)
+          p = Path("packages/web/index.html")
+          s = p.read_text().replace('<title>Fake World</title>', '<title>微信 · 小手机</title>\\n    <style>html,body,#root{width:100%;height:100%;margin:0;overflow:hidden} .phone-return{position:fixed;z-index:99999;left:8px;top:8px;padding:7px 11px;border:0;border-radius:7px;background:#ffffffdf;color:#222;font:14px -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 1px 5px #0002} @media(max-width:700px){.phone-return{top:calc(env(safe-area-inset-top) + 6px)}}</style>')
+          s = s.replace('<div id="root"></div>', '<button class="phone-return" onclick="location.href=\'../\'">‹ 返回小手机</button>\\n    <div id="root"></div>')
+          p.write_text(s)
+          PY
+
+      - name: Install and build Fake World frontend
+        working-directory: fake-world
+        run: |
+          pnpm install --filter @fake-world/web... --no-frozen-lockfile
+          pnpm --filter @fake-world/web build
+
+      - name: Assemble Pages site
+        run: |
+          mkdir -p phone/wechat
+          cp -a fake-world/packages/web/dist/. phone/wechat/
+          cp fake-world/LICENSE phone/wechat/LICENSE
+          touch phone/.nojekyll
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "."
+          path: phone
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
