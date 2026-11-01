@@ -73,8 +73,8 @@ jobs:
           p = Path("packages/web/src/stateV2/dialogueList.ts")
           s = p.read_text()
           a = s.index("export const dialogueListAtom =")
-          b = s.index("\\n\\nexport const dialogueListEffect", a)
-          s = s[:a] + "export const dialogueListAtom = atomWithStorage<TStateDialogueList>(\"dialogueList-custom-v1\", []);" + s[b:]
+          b = s.index("export const dialogueListEffect", a)
+          s = s[:a] + "export const dialogueListAtom = atomWithStorage<TStateDialogueList>(\"dialogueList-custom-v1\", []);" + "\\n\\n" + s[b:]
           p.write_text(s)
 
           p = Path("packages/web/src/stateV2/conversation/consts.ts")
