@@ -67,7 +67,7 @@ jobs:
           s = s.replace('import { useSetAtom } from "jotai";\\n', "")
           s = s.replace('\\tconst setMode = useSetAtom(modeAtom);\\n', "")
           s = s.replace('\\tconst setActivatedNode = useSetAtom(activatedNodeAtom);\\n', "")
-          s = s.replace('const { t } = useTranslation();', `const { t } = useTranslation();
+          s = s.replace('const { t } = useTranslation();', '''const { t } = useTranslation();
           const [addVisible, setAddVisible] = useState(false);
           const [nickname, setNickname] = useState("");
           const [wechat, setWechat] = useState("");
@@ -77,7 +77,7 @@ jobs:
             if (!nickname.trim() || !wechat.trim() || !avatar) { message.warning("请填写昵称、微信号并上传头像"); return; }
             setAllProfilesValue((pv) => [...pv, { id: randomUserId(), nickname: nickname.trim(), wechat: wechat.trim(), avatarInfo: avatar, momentsPrivacy: "all", momentsBackgroundLike: false, thumbnailInfo: [], privacy: "all" }]);
             setAddVisible(false); setNickname(""); setWechat(""); setAvatar(""); setAvatarName("选择头像"); message.success("联系人已添加");
-          };`)
+          };''')
           s = s.replace('import { Suspense } from "react";', '''import { Suspense, useState } from "react";
           import { Modal, Input, Button, message } from "antd";
           import { randomUserId } from "@/faker/wechat/user";
