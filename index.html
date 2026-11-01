@@ -819,33 +819,67 @@ document.addEventListener('DOMContentLoaded',()=>{
  updateTime();setInterval(updateTime,1000);
 })();
 
-/* Phone wallpaper settings; lock PIN intentionally remains unchanged. */
+/* Phone wallpaper settings; preserve the existing 271199 lock PIN. */
 (function(){
  const $=id=>document.getElementById(id);
- const STORE='classic_phone_wallpapers_v1';
+ const STORE='classic_phone_wallpapers_v2';
  const defaults={
   lock:'linear-gradient(160deg,#d8e4ed,#f1e5e7 58%,#e8e4f2)',
   home:'linear-gradient(160deg,#d9e5ed,#f2e6e7 58%,#e8e4f2)'
  };
  let saved={};try{saved=JSON.parse(localStorage.getItem(STORE)||'{}')||{}}catch(e){}
+ function setBg(el,value){
+  if(value && value.startsWith('data:image/')){
+   el.style.backgroundImage='url("'+value+'")';
+   el.style.backgroundSize='cover';
+   el.style.backgroundPosition='center center';
+   el.style.backgroundRepeat='no-repeat';
+  }else{
+   el.style.background=value||'';
+   el.style.backgroundImage='';
+   el.style.backgroundSize='';
+   el.style.backgroundPosition='';
+   el.style.backgroundRepeat='';
+  }
+ }
  function apply(){
-  $('phoneLockScreen').style.background=saved.lock||defaults.lock;
-  $('launcherView').style.background=saved.home||defaults.home;
+  setBg($('phoneLockScreen'),saved.lock||defaults.lock);
+  setBg($('launcherView'),saved.home||defaults.home);
  }
- function store(key,value){
-  saved[key]=value;
-  try{localStorage.setItem(STORE,JSON.stringify(saved));apply();return true}
-  catch(e){alert('保存失败：图片可能太大，请换一张较小的图片。');return false}
+ function compressImage(file){
+  return new Promise((resolve,reject)=>{
+   const reader=new FileReader();
+   reader.onerror=()=>reject(new Error('读取图片失败'));
+   reader.onload=()=>{
+    const img=new Image();
+    img.onerror=()=>reject(new Error('无法识别这张图片'));
+    img.onload=()=>{
+     const max=1200,scale=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));
+     const canvas=document.createElement('canvas');
+     canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+     canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+     const ctx=canvas.getContext('2d');
+     ctx.drawImage(img,0,0,canvas.width,canvas.height);
+     resolve(canvas.toDataURL('image/jpeg',0.82));
+    };
+    img.src=reader.result;
+   };
+   reader.readAsDataURL(file);
+  });
  }
- function upload(input,key){
-  input.addEventListener('change',()=>{
+ async function upload(input,key){
+  input.addEventListener('change',async()=>{
    const file=input.files&&input.files[0];if(!file)return;
    if(!file.type.startsWith('image/')){alert('请选择图片文件');input.value='';return}
-   if(file.size>5*1024*1024){alert('图片请控制在5MB以内');input.value='';return}
-   const reader=new FileReader();
-   reader.onload=()=>{if(store(key,reader.result))alert('壁纸已更换');input.value=''};
-   reader.onerror=()=>{alert('图片读取失败');input.value=''};
-   reader.readAsDataURL(file);
+   try{
+    const data=await compressImage(file);
+    const next={...saved,[key]:data};
+    localStorage.setItem(STORE,JSON.stringify(next));
+    saved=next;apply();
+    alert(key==='lock'?'锁屏壁纸已更换':'桌面壁纸已更换');
+   }catch(e){
+    alert('壁纸保存失败：'+(e.message||'浏览器存储空间不足，请清理浏览器空间后重试'));
+   }finally{input.value=''}
   });
  }
  $('launchPhoneSettings').addEventListener('click',()=>showView('phoneSettingsView'));
@@ -856,5 +890,4 @@ document.addEventListener('DOMContentLoaded',()=>{
  $('resetHomeWallpaper').onclick=()=>{delete saved.home;localStorage.setItem(STORE,JSON.stringify(saved));apply()};
  upload($('lockWallpaperFile'),'lock');upload($('homeWallpaperFile'),'home');
  apply();
-})();
-</script></body></html>
+})();</script></body></html>
