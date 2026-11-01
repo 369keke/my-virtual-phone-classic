@@ -59,7 +59,7 @@ jobs:
           p = Path("packages/web/src/faker/wechat/user/consts.ts")
           s = p.read_text()
           start = s.index("export const INIT_FRIENDS:")
-          s = s[:start] + "export const INIT_FRIENDS: TStateAllProfiles = [];\\n"
+          s = s[:start] + "export const INIT_FRIENDS: TStateAllProfiles = [];\n"
           s = s.replace("nickname: \"林克\"", "nickname: \"我\"")
           s = s.replace("wechat: \"link\"", "wechat: \"my-wechat\"")
           s = s.replace("area: \"Hyrule\"", "area: \"\"")
@@ -74,13 +74,13 @@ jobs:
           s = p.read_text()
           a = s.index("export const dialogueListAtom =")
           b = s.index("export const dialogueListEffect", a)
-          s = s[:a] + "export const dialogueListAtom = atomWithStorage<TStateDialogueList>(\"dialogueList-custom-v1\", []);" + "\\n\\n" + s[b:]
+          s = s[:a] + "export const dialogueListAtom = atomWithStorage<TStateDialogueList>(\"dialogueList-custom-v1\", []);" + "\n\n" + s[b:]
           p.write_text(s)
 
           p = Path("packages/web/src/stateV2/conversation/consts.ts")
           s = p.read_text()
           a = s.index("export const MOCK_INIT_CONVERSATION_LIST:")
-          s = s[:a] + "export const MOCK_INIT_CONVERSATION_LIST: TConversationItem[] = [];\\n"
+          s = s[:a] + "export const MOCK_INIT_CONVERSATION_LIST: TConversationItem[] = [];\n"
           p.write_text(s)
 
           p = Path("packages/web/src/stateV2/conversation/core.ts")
@@ -88,8 +88,8 @@ jobs:
           p.write_text(s)
 
           p = Path("packages/web/index.html")
-          s = p.read_text().replace("<title>Fake World</title>", "<title>微信 · 小手机</title>\\n    <style>html,body,#root{width:100%;height:100%;margin:0;overflow:hidden} .phone-return{position:fixed;z-index:99999;left:8px;top:8px;padding:7px 11px;border:0;border-radius:7px;background:#ffffffdf;color:#222;font:14px -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 1px 5px #0002} @media(max-width:700px){.phone-return{top:calc(env(safe-area-inset-top) + 6px)}}</style>")
-          s = s.replace('<div id="root"></div>', """<button class="phone-return" onclick="location.href='../'">‹ 返回小手机</button>\\n    <div id="root"></div>""")
+          s = p.read_text().replace("<title>Fake World</title>", "<title>微信 · 小手机</title>\n    <style>html,body,#root{width:100%;height:100%;margin:0;overflow:hidden} .phone-return{position:fixed;z-index:99999;left:8px;top:8px;padding:7px 11px;border:0;border-radius:7px;background:#ffffffdf;color:#222;font:14px -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 1px 5px #0002} @media(max-width:700px){.phone-return{top:calc(env(safe-area-inset-top) + 6px)}}</style>")
+          s = s.replace('<div id="root"></div>', """<button class="phone-return" onclick="location.href='../'">‹ 返回小手机</button>\n    <div id="root"></div>""")
           p.write_text(s)
           PY
 
