@@ -890,4 +890,20 @@ document.addEventListener('DOMContentLoaded',()=>{
  $('resetHomeWallpaper').onclick=()=>{delete saved.home;localStorage.setItem(STORE,JSON.stringify(saved));apply()};
  upload($('lockWallpaperFile'),'lock');upload($('homeWallpaperFile'),'home');
  apply();
-})();</script></body></html>
+})();</script>
+<script>
+/* Always register and check for the newest app shell in Edge/installed PWA. */
+(function(){
+ if(!('serviceWorker' in navigator))return;
+ const updateApp=async()=>{
+  try{
+   const reg=await navigator.serviceWorker.register('./service-worker.js?refresh=15',{scope:'./',updateViaCache:'none'});
+   await reg.update();
+   if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
+  }catch(err){console.warn('应用更新检查失败',err)}
+ };
+ if(document.readyState==='complete')updateApp();
+ else window.addEventListener('load',updateApp,{once:true});
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')navigator.serviceWorker.getRegistration('./').then(r=>r&&r.update()).catch(()=>{})});
+})();
+</script></body></html>
