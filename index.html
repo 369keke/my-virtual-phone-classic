@@ -134,6 +134,20 @@
 .xhs-dm-edit input{border:1px solid #ddd;border-radius:8px;padding:10px;font-size:15px}
 .xhs-dm-edit .avatar-preview{width:76px;height:76px;border-radius:50%;object-fit:cover;background:#eee;align-self:center}
 .xhs-dm-edit .avatar-pick{border:1px solid #ddd;border-radius:18px;padding:8px 12px;background:#fff}
+</style>
+<style>
+/* Profile pages use the same varied-height masonry note cards as the discovery feed */
+.xhs-post-grid{display:flex!important;align-items:flex-start;gap:9px;padding:9px!important;background:#f7f7f7}
+.xhs-profile-column{display:flex;flex:1;min-width:0;flex-direction:column;gap:9px}
+.xhs-profile-post{display:block!important;width:100%;min-height:0!important;height:auto!important;overflow:hidden;background:#fff;border-radius:9px;position:relative}
+.xhs-profile-post .xhs-card-image{display:block;width:100%;height:auto;max-height:360px;object-fit:cover;background:#eee}
+.xhs-profile-post .xhs-card-title{padding:9px 10px 3px;font-size:15px;line-height:1.4;font-weight:600;overflow-wrap:anywhere}
+.xhs-profile-post .xhs-card-author{display:flex;align-items:center;gap:6px;padding:7px 9px 10px;color:#888;font-size:12px;min-width:0}
+.xhs-profile-post .xhs-card-author img{width:26px;height:26px;border-radius:50%;object-fit:cover;flex:none}
+.xhs-profile-post .xhs-card-author span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xhs-profile-post .xhs-card-author small{font-size:12px;color:#777;white-space:nowrap;flex:none}
+.xhs-profile-post .xhs-profile-delete{z-index:2}
+.xhs-post-grid>.xhs-post-empty{width:100%}
 </style></head>
 <body><main class="phone">
 
@@ -228,10 +242,23 @@ function renderXhsProfile(){
  $('xhsProfileTabs').querySelectorAll('[data-profile-tab]').forEach(b=>{const t=b.dataset.profileTab;b.style.display=(!own&&(t==='comments'||t==='liked'))?'none':'';b.classList.toggle('active',own?t==='notes':t===xhsVisitorTab)});
  $('xhsOwnSubTabs').style.display=own?'flex':'none';
  const posts=own?xhsData.posts:(xhsVisitorTab==='favorites'?xhsData.visitorFavorites:xhsData.visitorPosts);
- $('xhsMyPosts').innerHTML=posts.length?posts.map(post=>'<article class="xhs-card xhs-profile-post" data-xpost="'+esc(post.id||'')+'">'+(((post.images&&post.images[0])||post.image)?'<img class="xhs-card-image" src="'+((post.images&&post.images[0])||post.image)+'" loading="lazy">':'')+'<div class="xhs-card-title">'+esc(post.title||post.text||'无标题')+'</div>'+(own?'<button type="button" class="xhs-profile-delete" data-xdelete="'+esc(post.id)+'">删除</button>':'')+'</article>').join(''):'<div class="xhs-post-empty" '+(!own&&xhsVisitorTab==='notes'?'data-xvisitor-empty="1" title="长按编辑笔记"':'')+'>'+(own?'还没有发布笔记':(xhsVisitorTab==='favorites'?'还没有收藏':'还没有发布笔记'))+'</div>';
- if(!own&&xhsVisitorTab==='notes'){const empty=$('xhsMyPosts').querySelector('[data-xvisitor-empty]');if(empty)bindXhsLongPress(empty,()=>openVisitorNoteComposer())}
- $('xhsMyPosts').querySelectorAll('[data-xpost]').forEach(el=>el.onclick=()=>openXhsPost(el.dataset.xpost,own));
- $('xhsMyPosts').querySelectorAll('[data-xdelete]').forEach(btn=>btn.onclick=e=>{e.stopPropagation();deleteXhsPost(btn.dataset.xdelete)});
+ const grid=$('xhsMyPosts');
+ if(posts.length){
+  const cols=[document.createElement('div'),document.createElement('div')];cols.forEach(col=>{col.className='xhs-profile-column';grid.appendChild(col)});grid.innerHTML='';
+  posts.forEach((post,index)=>{
+   const src=(post.images&&post.images[0])||post.image||'';
+   const authorAvatar=p.avatar||(own?xhsAvatarSrc():xhsDefaultAvatarSrc());
+   const authorName=p.name||'momo';
+   const holder=document.createElement('div');
+   holder.innerHTML='<article class="xhs-card xhs-profile-post" data-xpost="'+esc(post.id||'')+'">'+(src?'<img class="xhs-card-image" src="'+src+'" loading="lazy">':'<div class="xhs-placeholder" style="min-height:150px;display:flex;align-items:center;justify-content:center;background:#f0edf4;color:#999">暂无图片</div>')+'<div class="xhs-card-title">'+esc(post.title||post.text||'无标题')+'</div><div class="xhs-card-author"><img src="'+authorAvatar+'"><span>'+esc(authorName)+'</span><small>♡ '+(Number(post.likes)||0)+'</small></div>'+(own?'<button type="button" class="xhs-profile-delete" data-xdelete="'+esc(post.id)+'">删除</button>':'')+'</article>';
+   const card=holder.firstElementChild;cols[index%2].appendChild(card);
+  });
+ }else{
+  grid.innerHTML='<div class="xhs-post-empty" '+(!own&&xhsVisitorTab==='notes'?'data-xvisitor-empty="1" title="长按编辑笔记"':'')+'>'+(own?'还没有发布笔记':(xhsVisitorTab==='favorites'?'还没有收藏':'还没有发布笔记'))+'</div>';
+ }
+ if(!own&&xhsVisitorTab==='notes'){const empty=grid.querySelector('[data-xvisitor-empty]');if(empty)bindXhsLongPress(empty,()=>openVisitorNoteComposer())}
+ grid.querySelectorAll('[data-xpost]').forEach(el=>el.onclick=()=>openXhsPost(el.dataset.xpost,own));
+ grid.querySelectorAll('[data-xdelete]').forEach(btn=>btn.onclick=e=>{e.stopPropagation();deleteXhsPost(btn.dataset.xdelete)});
 }
 function setXhsProfileMode(mode){xhsProfileMode=mode==='visitor'?'visitor':'own';xhsVisitorTab='notes';showView('xhsProfileView');renderXhsProfile()}
 function openVisitorNoteComposer(){xhsCreateMode='visitor';publishXhs();xhsCreateMode='visitor';renderXhsComposerPreview();$('xhsCreateTitle').focus()}
