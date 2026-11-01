@@ -7,7 +7,7 @@ try{const raw=JSON.parse(localStorage.getItem(KEY)||'{}');data={...data,...raw};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(data));return true}catch(e){toast('本地空间不足，请减少图片后重试');return false}};
 function people(){try{return JSON.parse(localStorage.getItem('wx_simulator_v1')||'{}').people||[]}catch(e){return[]}}
 function currentRole(){const ps=people();const found=ps.find(p=>p.id===data.settings.activeRoleId);if(found)return found;if(ps.length){data.settings.activeRoleId=ps[0].id;save();return ps[0]}return null}
-function roleInfo(id){const p=people().find(x=>x.id===id);if(p)return{name:p.name||'用户',avatar:p.avatar||'',id:p.id};return data.profiles[id]?.snapshot||{name:'已删除用户',avatar:'',id}}
+function roleInfo(id){const p=people().find(x=>x.id===id);if(p)return{name:p.name||'用户',avatar:p.avatar||'',id:p.id};return data.posts.find(p=>p.authorId===id)?.authorSnapshot||data.profiles[id]?.snapshot||{name:'已删除用户',avatar:'',id}}
 function authorForPost(p){return people().some(x=>x.id===p.authorId)?roleInfo(p.authorId):(p.authorSnapshot||{name:'已删除用户',avatar:''})}
 function avatarHTML(info,cls='wb-avatar'){return info.avatar?'<img class="'+cls+'" src="'+esc(info.avatar)+'" alt="">':'<span class="'+cls+' wb-avatar-fallback">'+esc((info.name||'微').slice(0,1))+'</span>'}
 let page='home',feedMode='recommend',detailId=null,commentTarget=null,profileTargetId=null;
