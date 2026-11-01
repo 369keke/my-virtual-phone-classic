@@ -157,10 +157,47 @@
 .xhs-profile-column>.xhs-profile-post{width:100%!important;max-width:100%!important;min-width:0!important;flex:none!important}
 .xhs-profile-post .xhs-card-image{width:100%!important;height:auto!important;max-height:360px;object-fit:cover}
 .xhs-profile-post .xhs-card-title{font-size:15px!important;line-height:1.4!important;white-space:normal!important;overflow-wrap:anywhere}
-.xhs-profile-post .xhs-card-author{width:100%;box-sizing:border-box}</style></head>
-<body><main class="phone">
+.xhs-profile-post .xhs-card-author{width:100%;box-sizing:border-box}</style>
+<style>
+#phoneLockScreen{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;background:linear-gradient(160deg,#d8e4ed,#f1e5e7 58%,#e8e4f2);color:#222;padding:calc(env(safe-area-inset-top) + 22px) 24px calc(env(safe-area-inset-bottom) + 24px);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
+#phoneLockScreen.unlocked{display:none}
+.lock-status{align-self:flex-end;font-size:12px;color:#555;letter-spacing:2px}
+.lock-clock{font-size:76px;font-weight:250;line-height:1.1;margin-top:8vh;letter-spacing:-3px}
+.lock-date{font-size:17px;color:#555;margin-top:8px}
+.lock-weather,.launcher-weather{border:0;background:#ffffff80;color:#555;border-radius:22px;padding:9px 17px;font-size:14px}
+.lock-weather{margin-top:20px}
+.lock-bottom{margin-top:auto;width:min(100%,330px);text-align:center}
+.lock-prompt{font-size:14px;color:#555;margin-bottom:14px}
+.lock-dots{display:flex;justify-content:center;gap:15px;margin-bottom:22px}
+.lock-dots i{width:10px;height:10px;border-radius:50%;border:1px solid #555;background:transparent}
+.lock-dots i.filled{background:#333}
+.lock-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 22px;max-width:280px;margin:auto}
+.lock-keypad button{height:58px;width:58px;justify-self:center;border:0;border-radius:50%;background:#ffffff90;color:#222;font-size:25px;font-weight:400}
+.lock-keypad button:active{background:#ffffff}
+.lock-keypad .lock-empty{visibility:hidden}
+.lock-keypad .lock-back{font-size:22px;background:transparent}
+.lock-error{height:22px;color:#d33;font-size:12px;margin-top:8px}
+.launcher-weather{display:inline-block;margin:0 4px 25px}
+.launcher-date{margin-bottom:12px!important}
+#tabs.hidden{display:none!important}
+</style></head>
+<body><main class="phone"><section id="phoneLockScreen" aria-label="手机锁屏">
+ <div class="lock-status">●　●　●</div>
+ <div class="lock-clock" id="lockClock"></div>
+ <div class="lock-date" id="lockDate"></div>
+ <button type="button" class="lock-weather" id="lockWeather">☀ 点击获取天气</button>
+ <div class="lock-bottom">
+  <div class="lock-prompt">输入密码以解锁</div>
+  <div class="lock-dots" id="lockDots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="lock-keypad" id="lockKeypad">
+   <button type="button" data-pin="1">1</button><button type="button" data-pin="2">2</button><button type="button" data-pin="3">3</button><button type="button" data-pin="4">4</button><button type="button" data-pin="5">5</button><button type="button" data-pin="6">6</button><button type="button" data-pin="7">7</button><button type="button" data-pin="8">8</button><button type="button" data-pin="9">9</button>
+   <button type="button" class="lock-empty" disabled></button><button type="button" data-pin="0">0</button><button type="button" data-pin="back" class="lock-back">⌫</button>
+  </div>
+  <div class="lock-error" id="lockError" aria-live="polite"></div>
+ </div>
+</section>
 
-<section class="view active launcher" id="launcherView"><div class="launcher-clock" id="launcherClock"></div><div class="launcher-date">我的小手机</div><div class="launcher-grid"><button class="launcher-app" id="launchWechat"><span class="app-icon wechat">微</span><span>微信</span></button><button class="launcher-app" id="launchXhs"><span class="app-icon red">小</span><span>小红书</span></button></div><div class="launcher-hint">点击应用图标打开</div></section>
+<section class="view active launcher" id="launcherView"><div class="launcher-clock" id="launcherClock"></div><div class="launcher-date" id="launcherDate">我的小手机</div><div class="launcher-weather" id="launcherWeather">☀ 点击获取天气</div><div class="launcher-grid"><button class="launcher-app" id="launchWechat"><span class="app-icon wechat">微</span><span>微信</span></button><button class="launcher-app" id="launchXhs"><span class="app-icon red">小</span><span>小红书</span></button></div><div class="launcher-hint">点击应用图标打开</div></section>
 <header class="bar hidden" id="mainbar"><button id="toLauncher" aria-label="返回桌面">⌂</button><h1 id="barTitle">微信</h1><div><button id="addBtn" aria-label="添加">＋</button></div></header>
 <section class="view" id="chatsView"><div class="search">⌕　搜索</div><div class="list" id="chatList"></div></section>
 <section class="view" id="contactsView"><div class="list" id="contactList"></div></section>
@@ -190,7 +227,7 @@
 </section>
 <section class="view xhs-create" id="xhsCreateView"><div class="xhs-editor-head"><button id="xhsCreateCancel" type="button">‹</button><button id="xhsSaveDraft" type="button">▣ 存草稿</button></div><div class="xhs-editor-scroll"><div class="xhs-editor-images"><div id="xhsCreateImageBox" class="xhs-editor-image-grid"><button type="button" class="xhs-add-image" onclick="document.getElementById('xhsCreateImages').click()"><span>＋</span><small>添加图片</small></button></div><input id="xhsCreateImages" type="file" accept="image/*" multiple class="hidden"><small class="xhs-editor-tip">最多添加 9 张图片，第一张作为封面</small></div><input id="xhsCreateTitle" class="xhs-title-input" placeholder="添加标题" maxlength="30"><div class="xhs-body-wrap"><textarea id="xhsCreateText" class="xhs-body-input" placeholder="添加正文，分享你的精彩瞬间…"></textarea><button type="button" id="xhsVoiceDraft" class="xhs-voice-draft">♩</button></div><div class="xhs-editor-tools"><button type="button" id="xhsAddTopic">＋ 添加话题</button><button type="button" id="xhsAddMention">@ 用户</button><button type="button" id="xhsAddPoll">▥ 投票</button></div><input id="xhsCreateTopics" class="xhs-extra-input" placeholder="# 话题标签，多个话题用空格分开"><div class="xhs-editor-row" id="xhsLocationRow"><span>◎　标记地点</span><strong id="xhsLocationText">未设置　›</strong></div><div class="xhs-editor-row" id="xhsVisibilityRow"><span>♧　公开可见</span><strong id="xhsVisibilityText">所有人可见　›</strong></div><div class="xhs-editor-row" id="xhsComponentsRow"><span>▦　添加组件</span><strong>可添加直播　›</strong></div><div class="xhs-editor-extra" id="xhsOptionalFields"><label>发布时间<input id="xhsCreateDate" placeholder="发布时间"></label><label>IP属地<input id="xhsCreateIp" placeholder="北京"></label><label>浏览量<input id="xhsCreateViews" type="number" min="0" value="0"></label><label>评论数<input id="xhsCreateComments" type="number" min="0" value="0"></label><label>点赞数<input id="xhsCreateLikes" type="number" min="0" value="0"></label></div><div class="xhs-editor-bottom"><button type="button" id="xhsScheduleBtn">◷ 发日常 <small>3天可见</small></button><button type="button" id="xhsCreatePublish" class="xhs-publish-main">发笔记</button></div></div><div class="xhs-preview-panel hidden" id="xhsPreviewPanel"><b>发布预览</b><div class="xhs-preview-phone"><div class="xhs-preview-head"><img id="xhsPreviewAvatar" src=""><strong id="xhsPreviewName">momo</strong><button id="xhsPreviewFollow" hidden>关注</button></div><div class="xhs-preview-image" id="xhsPreviewImage">图片预览区域</div><div class="xhs-preview-copy"><h3 id="xhsPreviewTitle">标题</h3><p id="xhsPreviewText">正文</p><div class="xhs-preview-tags" id="xhsPreviewTopics"></div><div class="xhs-preview-meta" id="xhsPreviewMeta"></div><div class="xhs-preview-meta" id="xhsPreviewStats"></div></div></div><button type="button" id="xhsPreviewClose">返回编辑</button></div><div class="hidden"><button id="xhsCreateOwn"></button><button id="xhsCreateVisitor"></button><button id="xhsCreatePublish2"></button></div></section><section class="view xhs" id="xhsDetailView"><div class="xhs-detail-scroll" id="xhsDetailContent"></div><div class="xhs-detail-bottom"><button id="xhsCommentInputBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.1 2.1 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg><span>说点什么...</span></button><button id="xhsLikeBtn" class="xhs-bottom-action" aria-label="点赞"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27S3 19 3 10.5C3 4 11 2 16 9c5-7 13-5 13 1.5C29 19 16 27 16 27Z"/></svg><span id="xhsLikeCount">0</span></button><button id="xhsCollectBtn" class="xhs-bottom-action" aria-label="收藏"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 2.5 4.1 8.3 9.2 1.3-6.65 6.48 1.57 9.15L16 23.4l-8.22 4.33 1.57-9.15L2.7 12.1l9.2-1.3Z"/></svg><span id="xhsCollectCount">0</span></button><button id="xhsCommentsBtn" class="xhs-bottom-action" aria-label="评论"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5C8.5 3.5 2.5 8.8 2.5 15.3c0 3.1 1.5 5.9 4 7.8L5.5 29l6.2-3c1.4.4 2.8.6 4.3.6 7.5 0 13.5-5.3 13.5-11.8S23.5 3.5 16 3.5Z"/><circle cx="10" cy="15.5" r="1.1"/><circle cx="16" cy="15.5" r="1.1"/><circle cx="22" cy="15.5" r="1.1"/></svg><span id="xhsCommentCount">0</span></button></div></section>
 <section class="view xhs" id="xhsProfileView"><div class="xhs-profile"><div class="xhs-profile-hero" id="xhsProfileHero"><div class="xhs-profile-tools"><button id="xhsBackHome" style="background:none;border:0;color:white;font-size:22px">☰</button><div><button id="xhsEditProfile" style="border:0;border-radius:18px;padding:5px 9px;font-size:12px">✎ 编辑</button>　<button style="border:0;background:none;color:white;font-size:22px">↗</button></div></div><div class="xhs-profile-main"><img id="xhsProfileAvatar" class="xhs-avatar" src="" alt=""><div><div class="xhs-profile-name" id="xhsProfileName">可可领</div><div class="xhs-profile-meta" id="xhsProfileId">小红书号：未设置</div><div class="xhs-profile-meta">IP：<span id="xhsProfileIp">北京</span></div></div></div><div class="xhs-stats"><span><b id="xhsFollowing">0</b> 关注</span><span><b id="xhsFans">0</b> 粉丝</span><span><b id="xhsProfileLikes">0</b> 获赞与收藏</span></div><div class="xhs-bio" id="xhsBio">介绍一下自己吧</div><div id="xhsGenderBadge" class="xhs-gender-badge" style="display:none"></div><div id="xhsVisitorActions" style="display:none;gap:8px;margin-top:14px"><button type="button" id="xhsVisitorFollow" style="flex:1;height:38px;border:0;border-radius:8px;color:#fff;background:#ff2442">关注</button><button type="button" id="xhsVisitorMessage" style="flex:1;height:38px;border:1px solid #ffffff55;border-radius:8px;color:#fff;background:#ffffff22">发私信</button></div></div><div class="xhs-profile-tabs" id="xhsProfileTabs"><button type="button" class="xhs-profile-tab active" data-profile-tab="notes">笔记</button><button type="button" class="xhs-profile-tab" data-profile-tab="comments">评论</button><button type="button" class="xhs-profile-tab" data-profile-tab="favorites">收藏</button><button type="button" class="xhs-profile-tab" data-profile-tab="liked">赞过</button><button type="button" class="xhs-profile-search">⌕</button></div><div class="xhs-profile-tabs" id="xhsOwnSubTabs" style="height:42px;justify-content:flex-start;padding-left:20px;font-size:13px">公开 0　　私密 0　　合集 0</div><div class="xhs-post-grid" id="xhsMyPosts"><div class="xhs-post-empty">还没有发布笔记</div></div></div><nav class="xhs-bottom"><button id="xhsProfileHome">首页</button><button>市集</button><button class="xhs-plus" id="xhsPublish2">＋</button><button>消息</button><button>我</button></nav></section><section class="view" id="meView"><div style="padding:22px 16px;background:white;display:flex;align-items:center;gap:14px" id="myProfile"></div><div class="list" style="margin-top:12px"><button class="row" id="managePeople"><span class="avatar">👥</span><span class="row-main">人物管理</span><span>›</span></button><button class="row" id="createGroup"><span class="avatar">💬</span><span class="row-main">发起群聊</span><span>›</span></button><button class="row" id="backupData"><span class="avatar">📦</span><span class="row-main">数据备份与恢复<div class="small">导出或导入人物、头像和聊天记录</div></span><span>›</span></button></div></section>
-<nav class="tabs" id="tabs"><button class="on" data-view="chatsView"><b>▣</b>微信</button><button data-view="contactsView"><b>♙</b>通讯录</button><button data-view="meView"><b>◉</b>我</button></nav>
+<nav class="tabs hidden" id="tabs"><button class="on" data-view="chatsView"><b>▣</b>微信</button><button data-view="contactsView"><b>♙</b>通讯录</button><button data-view="meView"><b>◉</b>我</button></nav>
 <section class="view" id="chatView"><div class="chathead" id="normalChatHead"><button id="backBtn">‹</button><div class="center" id="chatTitle">聊天</div><button id="chatMenu">···</button></div><div class="chathead hidden" id="captureHead"><button id="cancelCapture">‹</button><div class="center">选择聊天记录</div><button type="button" style="visibility:hidden">···</button></div><div class="capture-toolbar" id="captureToolbar"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="captureSelectAll" style="width:22px;height:22px"> 全选</label><span class="small" id="captureSelectedCount">已选择(0)</span><button class="generate" id="captureGenerate" disabled>去生成(0)</button></div><div class="messages" id="messages"></div><div class="capture-toolbar" id="captureBottom" style="justify-content:flex-end"><button class="generate" id="captureGenerateBottom" disabled>去生成(0)</button></div><div class="composer"><button id="switchSender" title="切换发送身份">⇄</button><textarea id="messageInput" placeholder="发送消息…" rows="1"></textarea><button id="emojiBtn">☺</button><button class="send" id="sendBtn">发送</button></div><div class="emoji-panel hidden" id="emojiPanel"><div class="emoji-tabs" id="emojiTabs"></div><div class="emoji-label" id="emojiLabel">最近使用</div><div class="emoji-grid" id="emojiGrid"></div><div style="padding:8px 12px"><label class="small">添加自己的表情包（GIF / PNG / JPG）<input id="stickerUpload" type="file" accept="image/*" multiple style="display:block;margin-top:6px"></label></div></div></section>
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
 </main>
@@ -718,4 +755,47 @@ document.addEventListener('DOMContentLoaded',()=>{
  };
  document.querySelectorAll('.xhs-bottom button').forEach((b,i)=>{if(i===3)b.onclick=xhsDmOpenPage});
 });
+
+/* Lock screen + launcher clock/weather */
+(function(){
+ const pinCode='271199';let entered='';
+ const $id=id=>document.getElementById(id);
+ const pad=$id('lockKeypad'),dots=$id('lockDots'),screen=$id('phoneLockScreen');
+ function updateTime(){
+  const now=new Date(),time=now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const date=now.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});
+  $id('launcherClock').textContent=time;
+  $id('lockClock').textContent=time;
+  $id('lockDate').textContent=date;
+ }
+ function renderDots(){[...dots.children].forEach((d,i)=>d.classList.toggle('filled',i<entered.length))}
+ function unlock(){screen.classList.add('unlocked');entered='';renderDots();$id('lockError').textContent=''}
+ pad.addEventListener('click',e=>{
+  const b=e.target.closest('[data-pin]');if(!b)return;
+  const v=b.dataset.pin;
+  if(v==='back'){entered=entered.slice(0,-1);$id('lockError').textContent='';renderDots();return}
+  if(entered.length>=6)return;
+  entered+=v;renderDots();
+  if(entered.length===6){
+   if(entered===pinCode){unlock()}
+   else{ $id('lockError').textContent='密码错误，请重新输入';setTimeout(()=>{entered='';renderDots()},450)}
+  }
+ });
+ async function getWeather(){
+  const targets=[$id('lockWeather'),$id('launcherWeather')];
+  targets.forEach(t=>t.textContent='正在获取天气…');
+  if(!navigator.geolocation){targets.forEach(t=>t.textContent='天气暂不可用');return}
+  navigator.geolocation.getCurrentPosition(async pos=>{
+   try{
+    const {latitude,longitude}=pos.coords;
+    const res=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+latitude+'&longitude='+longitude+'&current=temperature_2m,weather_code&temperature_unit=celsius');
+    const data=await res.json(),code=data.current.weather_code,temp=Math.round(data.current.temperature_2m);
+    const labels={0:'晴',1:'大致晴朗',2:'局部多云',3:'阴',45:'雾',48:'雾',51:'毛毛雨',53:'小雨',55:'小雨',61:'小雨',63:'中雨',65:'大雨',71:'小雪',73:'中雪',75:'大雪',80:'阵雨',81:'阵雨',82:'强阵雨',95:'雷雨'};
+    const label=(labels[code]||'天气');targets.forEach(t=>t.textContent='☁ '+label+'　'+temp+'°C');
+   }catch(e){targets.forEach(t=>t.textContent='天气获取失败，点击重试')}
+  },()=>targets.forEach(t=>t.textContent='天气未授权，点击重试'),{timeout:10000});
+ }
+ $id('lockWeather').onclick=getWeather;$id('launcherWeather').onclick=getWeather;
+ updateTime();setInterval(updateTime,1000);
+})();
 </script></body></html>
