@@ -144,7 +144,7 @@ jobs:
 
           # 固定使用简体中文，并让底部导航适配不同屏幕宽度和安全区域
           p = Path("packages/web/src/i18n/index.ts")
-          s = p.read_text().replace('supportedLngs: ["zh-CN", "zh-TW", "en-US"],', 'supportedLngs: ["zh-CN", "zh-TW", "en-US"],\\n\\t\\tlng: "zh-CN",')
+          s = p.read_text().replace('supportedLngs: ["zh-CN", "zh-TW", "en-US"],', 'supportedLngs: ["zh-CN", "zh-TW", "en-US"],\n\t\tlng: "zh-CN",')
           p.write_text(s)
 
           p = Path("packages/web/src/wechatComponents/BottomNavbar/index.tsx")
