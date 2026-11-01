@@ -6,10 +6,44 @@ const $=s=>document.querySelector(s),read=(k,d)=>{try{return JSON.parse(localSto
 let people=read('people',[]),messages=read('messages',{}),moments=read('moments',[]),me=read('me',{name:'我',avatar:''}),tab='chat',active=null;
 function avatar(x){return x||fallback}function now(){return new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}
 function go(t){tab=t;active=null;$('#head').classList.remove('hidden');$('#nav').classList.remove('hidden');$('#title').textContent=({chat:'微信',contacts:'通讯录',discover:'发现',me:'我'})[t];document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));render()}
-function render(){let b=$('#body');b.innerHTML='';if(tab==='chat'){let a=[...people].sort((x,y)=>(messages[y.id]?.at||0)-(messages[x.id]?.at||0));if(!a.length)b.innerHTML='<div class="empty">还没有聊天<br>点击右上角「＋」即可添加朋友</div>';a.forEach(p=>{let m=(messages[p.id]||[]).slice(-1)[0];b.insertAdjacentHTML('beforeend',`<div class="row" onclick="chat('${p.id}')"><img class="avatar" src="${avatar(p.avatar)}"><div class="info"><div class="name">${safe(p.name)}</div><div class="preview">${safe(m?.text||'')}</div></div><div class="time">${m?.time||''}</div></div>`)})}
-if(tab==='contacts'){b.innerHTML='<div class="search" onclick="search()">⌕ 搜索</div><div class="contact" role="button" style="cursor:pointer" onclick="newPerson()"><div class="avatar" style="background:#07c160;color:white;display:grid;place-items:center;font-size:25px">＋</div>新的朋友</div><div class="label">我的好友</div>';if(!people.length)b.insertAdjacentHTML('beforeend','<div class="empty">暂无联系人<br>点击右上角「＋」添加朋友，或点这里的「新的朋友」</div>');people.forEach(p=>b.insertAdjacentHTML('beforeend',`<div class="contact" onclick="profile('${p.id}')"><img class="avatar" src="${avatar(p.avatar)}">${safe(p.name)}</div>`))}
-if(tab==='discover')b.innerHTML='<div class="discover" onclick="showMoments()"><b>◎</b>朋友圈　<span style="margin-left:auto;color:#aaa">›</span></div><div class="discover"><b>⌁</b>视频号</div><div class="discover"><b>◇</b>扫一扫</div><div class="discover"><b>▤</b>小程序</div>';
-if(tab==='me')b.innerHTML=`<div class="mebox" onclick="editMe()"><img class="avatar" src="${avatar(me.avatar)}"><div class="info"><div class="name">${safe(me.name)}</div><div class="preview">微信号：mywechat</div></div>›</div><div class="discover">收藏</div><div class="discover" onclick="showMoments()">朋友圈</div><div class="discover">设置</div>`}
+function render(){
+  const b = $('#body');
+  b.innerHTML = '';
+  if(tab === 'chat'){
+    const list = [...people].sort((x,y)=>(messages[y.id]?.at||0)-(messages[x.id]?.at||0));
+    if(!list.length) b.innerHTML = '<div class="empty">还没有聊天<br>点击右上角「＋」即可添加朋友</div>';
+    list.forEach(p => {
+      const m = (messages[p.id] || []).slice(-1)[0];
+      b.insertAdjacentHTML('beforeend',
+        '<div class="row" data-chat="' + safe(p.id) + '">' +
+        '<img class="avatar" src="' + avatar(p.avatar) + '">' +
+        '<div class="info"><div class="name">' + safe(p.name) + '</div>' +
+        '<div class="preview">' + safe(m?.text || '') + '</div></div>' +
+        '<div class="time">' + safe(m?.time || '') + '</div></div>');
+    });
+    b.querySelectorAll('[data-chat]').forEach(el => el.addEventListener('click', () => chat(el.dataset.chat)));
+  } else if(tab === 'contacts'){
+    b.innerHTML = '<div class="search" id="contactSearch">⌕ 搜索</div>' +
+      '<div class="contact" id="newFriend" role="button"><div class="avatar" style="background:#07c160;color:white;display:grid;place-items:center;font-size:25px">＋</div>新的朋友</div>' +
+      '<div class="label">我的好友</div>';
+    if(!people.length) b.insertAdjacentHTML('beforeend','<div class="empty">暂无联系人<br>点击「新的朋友」添加</div>');
+    people.forEach(p => {
+      b.insertAdjacentHTML('beforeend','<div class="contact" data-profile="' + safe(p.id) + '"><img class="avatar" src="' + avatar(p.avatar) + '">' + safe(p.name) + '</div>');
+    });
+    $('#newFriend').addEventListener('click', newPerson);
+    $('#contactSearch').addEventListener('click', search);
+    b.querySelectorAll('[data-profile]').forEach(el => el.addEventListener('click', () => profile(el.dataset.profile)));
+  } else if(tab === 'discover'){
+    b.innerHTML = '<div class="discover" id="momentsLink"><b>◎</b>朋友圈　<span style="margin-left:auto;color:#aaa">›</span></div>' +
+      '<div class="discover"><b>⌁</b>视频号</div><div class="discover"><b>◇</b>扫一扫</div><div class="discover"><b>▤</b>小程序</div>';
+    $('#momentsLink').addEventListener('click', showMoments);
+  } else if(tab === 'me'){
+    b.innerHTML = '<div class="mebox" id="editMe"><img class="avatar" src="' + avatar(me.avatar) + '">' +
+      '<div class="info"><div class="name">' + safe(me.name) + '</div><div class="preview">微信号：mywechat</div></div>›</div>' +
+      '<div class="discover">收藏</div><div class="discover" id="myMoments">朋友圈</div><div class="discover">设置</div>';
+    $('#editMe').addEventListener('click', editMe);
+    $('#myMoments').addEventListener('click', showMoments);
+  }
 }
 function showModal(s){$('#modal').innerHTML=s;$('#shade').style.display='flex'}function close(){ $('#shade').style.display='none'}$('#shade').onclick=e=>{if(e.target.id==='shade')close()}
 function addMenu(){newPerson()}
