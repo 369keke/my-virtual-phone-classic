@@ -149,7 +149,7 @@ function renderXhsProfile(){
  const posts=own?xhsData.posts:(xhsVisitorTab==='favorites'?xhsData.visitorFavorites:xhsData.visitorPosts);
  $('xhsMyPosts').innerHTML=posts.length?posts.map(post=>'<article class="xhs-card xhs-profile-post" data-xpost="'+esc(post.id||'')+'">'+(((post.images&&post.images[0])||post.image)?'<img src="'+((post.images&&post.images[0])||post.image)+'">':'')+'<div class="xhs-card-title">'+esc(post.title||post.text||'无标题')+'</div>'+(own?'<button type="button" class="xhs-profile-delete" data-xdelete="'+esc(post.id)+'">删除</button>':'')+'</article>').join(''):'<div class="xhs-post-empty" '+(!own&&xhsVisitorTab==='notes'?'data-xvisitor-empty="1" title="长按编辑笔记"':'')+'>'+(own?'还没有发布笔记':(xhsVisitorTab==='favorites'?'还没有收藏':'还没有发布笔记'))+'</div>';
  if(!own&&xhsVisitorTab==='notes'){const empty=$('xhsMyPosts').querySelector('[data-xvisitor-empty]');if(empty)bindXhsLongPress(empty,()=>openVisitorNoteComposer())}
- $('xhsMyPosts').querySelectorAll('[data-xpost]').forEach(el=>el.onclick=()=>{if(own)openXhsPost(el.dataset.xpost,true)});
+ $('xhsMyPosts').querySelectorAll('[data-xpost]').forEach(el=>el.onclick=()=>openXhsPost(el.dataset.xpost,own));
  $('xhsMyPosts').querySelectorAll('[data-xdelete]').forEach(btn=>btn.onclick=e=>{e.stopPropagation();deleteXhsPost(btn.dataset.xdelete)});
 }
 function setXhsProfileMode(mode){xhsProfileMode=mode==='visitor'?'visitor':'own';xhsVisitorTab='notes';showView('xhsProfileView');renderXhsProfile()}
@@ -176,7 +176,7 @@ function editXhsProfile(){
 function editXhsStat(post,key,label,id,own){const current=Number(post[key])||0;const value=prompt('修改'+label,String(current));if(value===null)return;if(!/^\d+$/.test(value))return alert('请输入非负整数');post[key]=Number(value);saveXhs();openXhsPost(id,own)}
 function bindXhsLongPress(el,action){if(!el)return;let timer=null,fired=false;const clear=()=>{if(timer)clearTimeout(timer);timer=null};el.addEventListener('pointerdown',()=>{fired=false;clear();timer=setTimeout(()=>{fired=true;action()},550)});['pointerup','pointerleave','pointercancel'].forEach(type=>el.addEventListener(type,clear));el.addEventListener('click',e=>{if(fired){e.preventDefault();e.stopImmediatePropagation();fired=false}},true)}
 function openXhsPost(id,own){
- const p=xhsData.posts.find(x=>x.id===id);if(!p)return;currentXhsPostId=id;p.comments=Array.isArray(p.comments)?p.comments:[];
+ const ownPost=xhsData.posts.find(x=>x.id===id);const visitorPost=xhsData.visitorPosts.find(x=>x.id===id);const p=ownPost||visitorPost;if(!p)return;own=!!ownPost;currentXhsPostId=id;p.comments=Array.isArray(p.comments)?p.comments:[];
  const img=(p.images&&p.images.length?p.images:[p.image]).filter(Boolean);
  const comments=p.comments.map((c,i)=>{
   const replies=Array.isArray(c.replies)?c.replies:(c.reply?[{name:xhsData.profile.name||'momo',avatar:xhsAvatarSrc(),text:c.reply,date:c.replyDate||''}]:[]);
@@ -351,6 +351,57 @@ renderChats();renderContacts();renderMe();
      saveXhs();closeModal();renderXhsFeed();renderXhsProfile();
    };
  }
+ renderXhsProfile();
+})();
+
+/* Visitor profile: create notes by long-pressing blank space; avatar menu switches profiles */
+(function(){
+ const priorRender=renderXhsProfile;
+ renderXhsProfile=function(){
+   priorRender();
+   const grid=$('xhsMyPosts');
+   if(!grid)return;
+   if(xhsProfileMode==='visitor'){
+     grid.querySelectorAll('[data-xpost]').forEach(card=>{
+       card.onclick=()=>openXhsPost(card.dataset.xpost,false);
+     });
+     if(!grid.querySelector('.xhs-profile-add-hint')){
+       const hint=document.createElement('div');
+       hint.className='xhs-profile-add-hint';
+       hint.textContent='长按下方空白处，发布新笔记';
+       grid.appendChild(hint);
+     }
+     if(!grid.dataset.visitorBlankBound){
+       grid.dataset.visitorBlankBound='1';
+       let timer=null,fired=false,sx=0,sy=0;
+       const clear=()=>{if(timer)clearTimeout(timer);timer=null};
+       grid.addEventListener('pointerdown',e=>{
+         if(xhsProfileMode!=='visitor'||e.target.closest('.xhs-profile-post'))return;
+         fired=false;clear();sx=e.clientX;sy=e.clientY;
+         timer=setTimeout(()=>{
+           fired=true;
+           openVisitorNoteComposer();
+         },650);
+       });
+       ['pointerup','pointercancel','pointerleave'].forEach(t=>grid.addEventListener(t,clear));
+       grid.addEventListener('pointermove',e=>{
+         if(timer&&(Math.abs(e.clientX-sx)>12||Math.abs(e.clientY-sy)>12))clear();
+       },{passive:true});
+       grid.addEventListener('click',e=>{
+         if(fired){e.preventDefault();e.stopPropagation();fired=false}
+       },true);
+     }
+     const avatar=$('xhsProfileAvatar');
+     if(avatar&&!avatar.dataset.switchMenuBound){
+       avatar.dataset.switchMenuBound='1';
+       bindXhsLongPress(avatar,()=>{
+         openModal('<h3>主页操作</h3><div class="btns"><button id="xhsSwitchOwnProfile" class="xhs-publish">切换成个人主页</button><button id="xhsEditVisitorProfileMenu">编辑这个主页</button><button onclick="closeModal()">取消</button></div>');
+         $('xhsSwitchOwnProfile').onclick=()=>{closeModal();setXhsProfileMode('own')};
+         $('xhsEditVisitorProfileMenu').onclick=()=>{closeModal();editXhsVisitorProfile()};
+       });
+     }
+   }
+ };
  renderXhsProfile();
 })();
 </script></body></html>
