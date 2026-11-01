@@ -50,14 +50,14 @@ jobs:
           from pathlib import Path
           p = Path("packages/web/vite.config.ts")
           s = p.read_text()
-          s = s.replace('export default defineConfig({', 'export default defineConfig({\\n\\tbase: "/my-virtual-phone-classic/wechat/",')
+          s = s.replace('export default defineConfig({', 'export default defineConfig({\n\tbase: "/my-virtual-phone-classic/wechat/",')
           p.write_text(s)
           p = Path("packages/web/src/main.tsx")
           s = p.read_text().replace('createBrowserRouter(routes)', 'createBrowserRouter(routes, { basename: "/my-virtual-phone-classic/wechat" })')
           p.write_text(s)
           p = Path("packages/web/index.html")
-          s = p.read_text().replace('<title>Fake World</title>', '<title>微信 · 小手机</title>\\n    <style>html,body,#root{width:100%;height:100%;margin:0;overflow:hidden} .phone-return{position:fixed;z-index:99999;left:8px;top:8px;padding:7px 11px;border:0;border-radius:7px;background:#ffffffdf;color:#222;font:14px -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 1px 5px #0002} @media(max-width:700px){.phone-return{top:calc(env(safe-area-inset-top) + 6px)}}</style>')
-          s = s.replace('<div id="root"></div>', '<button class="phone-return" onclick="location.href=\'../\'">‹ 返回小手机</button>\\n    <div id="root"></div>')
+          s = p.read_text().replace('<title>Fake World</title>', '<title>微信 · 小手机</title>\n    <style>html,body,#root{width:100%;height:100%;margin:0;overflow:hidden} .phone-return{position:fixed;z-index:99999;left:8px;top:8px;padding:7px 11px;border:0;border-radius:7px;background:#ffffffdf;color:#222;font:14px -apple-system,BlinkMacSystemFont,sans-serif;box-shadow:0 1px 5px #0002} @media(max-width:700px){.phone-return{top:calc(env(safe-area-inset-top) + 6px)}}</style>')
+          s = s.replace('<div id="root"></div>', '<button class="phone-return" onclick="location.href=\'../\'">‹ 返回小手机</button>\n    <div id="root"></div>')
           p.write_text(s)
           PY
 
