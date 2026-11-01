@@ -647,4 +647,13 @@ function xhsDmBindNav(){
  xhsDmBindBlank();
 }
 xhsDmBindNav();
+document.addEventListener('DOMContentLoaded',()=>{
+ $('xhsMessage').onclick=xhsDmOpenPage;
+ $('xhsVisitorMessage').onclick=()=>{
+  let c=xhsData.messageContacts.find(v=>v.name===xhsData.visitorProfile.name);
+  if(!c){c={id:'dm-'+Date.now(),name:xhsData.visitorProfile.name||'访客',avatar:xhsData.visitorProfile.avatar||''};xhsData.messageContacts.push(c);xhsData.dmChats[c.id]=[];xhsDmSave()}
+  xhsDmOpenChat(c.id);
+ };
+ document.querySelectorAll('.xhs-bottom button').forEach((b,i)=>{if(i===3)b.onclick=xhsDmOpenPage});
+});
 </script></body></html>
