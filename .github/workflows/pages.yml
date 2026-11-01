@@ -58,7 +58,7 @@ jobs:
           # 将通讯录右上角加号改为微信内可直接使用的添加联系人弹窗
           p = Path("packages/web/src/pages/wechat/contacts/index.tsx")
           s = p.read_text()
-          s = "\\n".join(line for line in s.splitlines() if not any(token in line for token in [
+          s = "\n".join(line for line in s.splitlines() if not any(token in line for token in [
               "import { activatedNodeAtom }", "import { modeAtom }", "import { useSetAtom }",
               "const setMode = useSetAtom(", "const setActivatedNode = useSetAtom("
           ]))
