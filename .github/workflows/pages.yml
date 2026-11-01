@@ -55,6 +55,73 @@ jobs:
           p = Path("packages/web/src/main.tsx")
           s = p.read_text().replace('createBrowserRouter(routes)', 'createBrowserRouter(routes, { basename: "/my-virtual-phone-classic/wechat" })')
           p.write_text(s)
+          # 将通讯录右上角加号改为微信内可直接使用的添加联系人弹窗
+          p = Path("packages/web/src/pages/wechat/contacts/index.tsx")
+          s = p.read_text()
+          s = s.replace('import { Suspense } from "react";', '''import { Suspense, useState } from "react";
+          import { Modal, Input, Button, message } from "antd";
+          import { randomUserId } from "@/faker/wechat/user";
+          import { setAllProfilesValue } from "@/stateV2/profile";''')
+          s = s.replace('''	const setActivatedNode = useSetAtom(activatedNodeAtom);
+
+          	return (''', '''	const setActivatedNode = useSetAtom(activatedNodeAtom);
+          	const [addVisible, setAddVisible] = useState(false);
+          	const [nickname, setNickname] = useState("");
+          	const [wechat, setWechat] = useState("");
+          	const [avatar, setAvatar] = useState("");
+          	const [avatarName, setAvatarName] = useState("选择头像");
+
+          	const createContact = () => {
+          		if (!nickname.trim() || !wechat.trim() || !avatar) {
+          			message.warning("请填写昵称、微信号并上传头像");
+          			return;
+          		}
+          		setAllProfilesValue((pv) => [...pv, {
+          			id: randomUserId(),
+          			nickname: nickname.trim(),
+          			wechat: wechat.trim(),
+          			avatarInfo: avatar,
+          			momentsPrivacy: "all",
+          			momentsBackgroundLike: false,
+          			thumbnailInfo: [],
+          			privacy: "all",
+          		}]);
+          		setAddVisible(false);
+          		setNickname("");
+          		setWechat("");
+          		setAvatar("");
+          		setAvatarName("选择头像");
+          		message.success("联系人已添加");
+          	};
+
+          	return (''')
+          s = s.replace('''						setMode("edit");
+          						setActivatedNode("contacts-container");''', '''						setAddVisible(true);''')
+          s = s.replace('''			<BottomNavbar />
+          		</>''', '''			<BottomNavbar />
+          			<Modal title="添加朋友" open={addVisible} onCancel={() => setAddVisible(false)} footer={null} centered>
+          				<div className="flex flex-col gap-4 py-2">
+          					<label className="flex items-center gap-3">
+          						<img src={avatar || "https://cdn-fakeworld.azureedge.net/fakeworld/ppf3dl.jpg"} className="h-16 w-16 rounded-md object-cover" />
+          						<span className="text-sm text-[#07c160]">
+          							{avatarName}
+          							<input type="file" accept="image/*" className="hidden" onChange={(e) => {
+          								const file = e.target.files?.[0];
+          								if (!file) return;
+          								const reader = new FileReader();
+          								reader.onload = () => { setAvatar(String(reader.result)); setAvatarName(file.name); };
+          								reader.readAsDataURL(file);
+          							}} />
+          						</span>
+          					</label>
+          					<Input placeholder="请输入朋友昵称" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+          					<Input placeholder="请输入微信号" value={wechat} onChange={(e) => setWechat(e.target.value)} />
+          					<Button type="primary" block onClick={createContact}>添加到通讯录</Button>
+          				</div>
+          			</Modal>
+          		</>''')
+          p.write_text(s)
+
           # 保留 Fake World 微信界面，移除默认演示联系人和聊天
           p = Path("packages/web/src/faker/wechat/user/consts.ts")
           s = p.read_text()
