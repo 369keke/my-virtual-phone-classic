@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 691 293" preserveAspectRatio="xMidYMid slice">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffca12"/><stop offset=".48" stop-color="#ffad00"/><stop offset="1" stop-color="#ff7900"/></linearGradient>
+ <linearGradient id="shine" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff46a" stop-opacity=".72"/><stop offset="1" stop-color="#ff7b00" stop-opacity="0"/></linearGradient>
+ <filter id="shadow" x="-20%" y="-30%" width="140%" height="170%"><feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dy="4"/><feComponentTransfer><feFuncA type="linear" slope=".3"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="691" height="293" fill="url(#bg)"/>
+<path d="M-20 215 Q110 250 190 130 T410 65 Q520 42 730 112 L730 310 -20 310Z" fill="#ffdd38" opacity=".25"/>
+<path d="M-20 260 Q170 235 280 165 T720 65" fill="none" stroke="#fff6a8" stroke-width="25" opacity=".2"/>
+<path d="M-20 285 Q140 252 270 195 T720 115" fill="none" stroke="#fff" stroke-width="3" opacity=".22"/>
+<circle cx="350" cy="142" r="170" fill="none" stroke="#fff6a8" stroke-width="3" opacity=".32"/>
+<circle cx="350" cy="142" r="205" fill="none" stroke="#fff6a8" stroke-width="2" opacity=".2"/>
+<path d="M0 0H691V65Q480 130 300 120T0 205Z" fill="url(#shine)"/>
+<g opacity=".35" fill="none" stroke="#fff6a8"><circle cx="79" cy="110" r="9"/><circle cx="79" cy="110" r="18"/><path d="M570 185l4 4m8-4 4 4m8-4 4 4m8-4 4 4m8-4 4 4"/></g>
+<g filter="url(#shadow)" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-weight="900" font-style="italic">
+ <text x="345" y="196" font-size="92" fill="#fff" stroke="#ff3980" stroke-width="17" stroke-linejoin="round" paint-order="stroke">微博热搜</text>
+ <text x="345" y="196" font-size="92" fill="#fff" stroke="#ff8eb4" stroke-width="5" stroke-linejoin="round" paint-order="stroke">微博热搜</text>
+</g>
+<text x="345" y="232" text-anchor="middle" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-size="20" font-weight="700" fill="#fff" opacity=".95">新鲜 · 热门 · 有料</text>
+<path d="M0 285L691 230V293H0Z" fill="#ff8a00" opacity=".25"/>
+</svg>
