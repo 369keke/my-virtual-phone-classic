@@ -7,3 +7,7 @@
 .wb-hot-cats{height:46px;flex:none;background:#fff;display:flex;align-items:center;justify-content:space-around;gap:15px;padding:0 12px;white-space:nowrap;overflow-x:auto;font-size:13px;color:#666}.wb-hot-cats b{height:100%;display:flex;align-items:center;color:#222;border-bottom:3px solid #ff6b26;padding:3px 3px 0}
 .wb-hot-notice{height:37px;display:flex;align-items:center;padding:0 14px;color:#999;font-size:11px;background:#f7f7f7}
 .wb-hot-row{min-height:59px;padding:7px 14px;gap:11px;background:#fff}.wb-rank{width:19px;font-size:17px;color:#aaa}.wb-rank.top{color:#f04432}.wb-hot-main{font-size:14px;font-weight:550;line-height:1.4}.wb-hot-meta{font-size:10px;color:#aaa}.wb-hot-tag{font-size:9px;background:#fff0e8;color:#ff6533;border-radius:2px;padding:1px 4px;vertical-align:1px}.wb-hot-row:first-child{min-height:65px}.wb-hot-foot{text-align:center;color:#bbb;font-size:10px;padding:18px}
+
+/* 独立微博热搜版头图片 */
+.wb-hot-hero{height:auto;aspect-ratio:691/293;flex:none;padding:0;background:#ffad00 url("./hot-header.svg") center/100% 100% no-repeat;position:relative;overflow:hidden}
+.wb-hot-hero #hotBack{position:absolute;left:0;top:0;width:14%;height:42%;padding:0;background:transparent;color:transparent;z-index:2}
