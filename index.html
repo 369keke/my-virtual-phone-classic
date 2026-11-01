@@ -137,8 +137,8 @@
 </style>
 <style>
 /* Profile pages use the same varied-height masonry note cards as the discovery feed */
-.xhs-post-grid{display:flex!important;align-items:flex-start;gap:9px;padding:9px!important;background:#f7f7f7}
-.xhs-profile-column{display:flex;flex:1;min-width:0;flex-direction:column;gap:9px}
+.xhs-post-grid{display:flex!important;flex-flow:row nowrap!important;align-items:flex-start;justify-content:space-between;width:100%!important;min-width:0;gap:9px;padding:9px!important;background:#f7f7f7;box-sizing:border-box}
+.xhs-profile-column{display:flex!important;flex:0 0 calc(50% - 4.5px)!important;width:calc(50% - 4.5px)!important;max-width:calc(50% - 4.5px)!important;min-width:0!important;flex-direction:column;gap:9px;box-sizing:border-box}
 .xhs-profile-post{display:block!important;width:100%;min-height:0!important;height:auto!important;overflow:hidden;background:#fff;border-radius:9px;position:relative}
 .xhs-profile-post .xhs-card-image{display:block;width:100%;height:auto;max-height:360px;object-fit:cover;background:#eee}
 .xhs-profile-post .xhs-card-title{padding:9px 10px 3px;font-size:15px;line-height:1.4;font-weight:600;overflow-wrap:anywhere}
@@ -153,7 +153,11 @@
 .xhs-dm-compose{gap:7px}
 .xhs-dm-compose .xhs-dm-perspective{flex:none;border:1px solid #1688f8;background:#fff;color:#1688f8;border-radius:20px;padding:9px 10px;font-size:12px;white-space:nowrap}
 .xhs-dm-compose .xhs-dm-perspective.active{background:#1688f8;color:#fff}
-</style></head>
+</style><style>.xhs-post-grid>.xhs-profile-column{width:calc(50% - 4.5px)!important;max-width:calc(50% - 4.5px)!important;flex-basis:calc(50% - 4.5px)!important}
+.xhs-profile-column>.xhs-profile-post{width:100%!important;max-width:100%!important;min-width:0!important;flex:none!important}
+.xhs-profile-post .xhs-card-image{width:100%!important;height:auto!important;max-height:360px;object-fit:cover}
+.xhs-profile-post .xhs-card-title{font-size:15px!important;line-height:1.4!important;white-space:normal!important;overflow-wrap:anywhere}
+.xhs-profile-post .xhs-card-author{width:100%;box-sizing:border-box}</style></head>
 <body><main class="phone">
 
 <section class="view active launcher" id="launcherView"><div class="launcher-clock" id="launcherClock"></div><div class="launcher-date">我的小手机</div><div class="launcher-grid"><button class="launcher-app" id="launchWechat"><span class="app-icon wechat">微</span><span>微信</span></button><button class="launcher-app" id="launchXhs"><span class="app-icon red">小</span><span>小红书</span></button></div><div class="launcher-hint">点击应用图标打开</div></section>
