@@ -628,22 +628,21 @@ function xhsDmOpenChat(id){
 function xhsDmRenderHistory(){
  const c=xhsDmContact(xhsActiveDmId);if(!c)return;
  const arr=xhsData.dmChats[c.id]||(xhsData.dmChats[c.id]=[]);
- const otherView=!!(xhsData.dmPerspective&&xhsData.dmPerspective[c.id]);
- $('xhsDmPerspective').classList.toggle('active',otherView);
- $('xhsDmPerspective').textContent=otherView?'⇄ 对方视角':'⇄ 我的视角';
- $('xhsDmHeadName').textContent=c.name+(otherView?' · 对方视角':'');
+ const nextFromOther=!!(xhsData.dmNextFromOther&&xhsData.dmNextFromOther[c.id]);
+ $('xhsDmPerspective').classList.toggle('active',nextFromOther);
+ $('xhsDmPerspective').textContent=nextFromOther?'⇄ 下一条发在左边':'⇄ 下一条发在右边';
+ $('xhsDmHeadName').textContent=c.name;
  $('xhsDmHistory').innerHTML=arr.length?arr.map(m=>{
-  const outgoing=(m.from==='other')===otherView;
-  const speakerIsMe=m.from==='me';
-  const avatarSrc=speakerIsMe?(xhsData.profile.avatar||xhsAvatarSrc()):xhsDmAvatar(c);
-  return '<div class="xhs-dm-line '+(outgoing?'mine':'')+'"><img src="'+avatarSrc+'"><div class="xhs-dm-bubble">'+esc(m.text)+'</div></div>';
+  const fromOther=m.from==='other';
+  const avatarSrc=fromOther?xhsDmAvatar(c):(xhsData.profile.avatar||xhsAvatarSrc());
+  return '<div class="xhs-dm-line '+(fromOther?'':'mine')+'"><img src="'+avatarSrc+'"><div class="xhs-dm-bubble">'+esc(m.text)+'</div></div>';
  }).join(''):'<div class="xhs-dm-date">现在可以开始聊天了</div>';
  $('xhsDmHistory').scrollTop=$('xhsDmHistory').scrollHeight;
 }
 function xhsDmSend(){
  const c=xhsDmContact(xhsActiveDmId),input=$('xhsDmInput'),textValue=input.value.trim();if(!c||!textValue)return;
  const arr=xhsData.dmChats[c.id]||(xhsData.dmChats[c.id]=[]);
- const otherView=!!(xhsData.dmPerspective&&xhsData.dmPerspective[c.id]);arr.push({from:otherView?'other':'me',text:textValue,time:xhsDmTime()});input.value='';xhsDmSave();xhsDmRenderHistory();xhsDmRenderList();
+ const nextFromOther=!!(xhsData.dmNextFromOther&&xhsData.dmNextFromOther[c.id]);arr.push({from:nextFromOther?'other':'me',text:textValue,time:xhsDmTime()});input.value='';xhsDmSave();xhsDmRenderHistory();xhsDmRenderList();
 }
 function xhsDmContactMenu(id){
  const c=xhsDmContact(id);if(!c)return;
@@ -686,8 +685,8 @@ function xhsDmBindNav(){
  $('xhsDmSend').onclick=xhsDmSend;
  $('xhsDmPerspective').onclick=()=>{
   if(!xhsActiveDmId)return;
-  xhsData.dmPerspective=xhsData.dmPerspective||{};
-  xhsData.dmPerspective[xhsActiveDmId]=!xhsData.dmPerspective[xhsActiveDmId];
+  xhsData.dmNextFromOther=xhsData.dmNextFromOther||{};
+  xhsData.dmNextFromOther[xhsActiveDmId]=!xhsData.dmNextFromOther[xhsActiveDmId];
   xhsDmSave();xhsDmRenderHistory();
  };
  $('xhsDmInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();xhsDmSend()}};
