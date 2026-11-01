@@ -148,6 +148,11 @@
 .xhs-profile-post .xhs-card-author small{font-size:12px;color:#777;white-space:nowrap;flex:none}
 .xhs-profile-post .xhs-profile-delete{z-index:2}
 .xhs-post-grid>.xhs-post-empty{width:100%}
+</style>
+<style>
+.xhs-dm-compose{gap:7px}
+.xhs-dm-compose .xhs-dm-perspective{flex:none;border:1px solid #1688f8;background:#fff;color:#1688f8;border-radius:20px;padding:9px 10px;font-size:12px;white-space:nowrap}
+.xhs-dm-compose .xhs-dm-perspective.active{background:#1688f8;color:#fff}
 </style></head>
 <body><main class="phone">
 
@@ -176,7 +181,7 @@
  <div class="xhs-dm-view">
   <div class="xhs-dm-head"><button id="xhsDmBack">‹</button><img id="xhsDmHeadAvatar" src=""><strong id="xhsDmHeadName">聊天</strong><button id="xhsDmEdit">···</button></div>
   <div class="xhs-dm-history" id="xhsDmHistory"></div>
-  <div class="xhs-dm-compose"><textarea id="xhsDmInput" rows="1" placeholder="发消息…"></textarea><button id="xhsDmSend">发送</button></div>
+  <div class="xhs-dm-compose"><button type="button" id="xhsDmPerspective" class="xhs-dm-perspective">⇄ 切换视角</button><textarea id="xhsDmInput" rows="1" placeholder="发消息…"></textarea><button id="xhsDmSend">发送</button></div>
  </div>
 </section>
 <section class="view xhs-create" id="xhsCreateView"><div class="xhs-editor-head"><button id="xhsCreateCancel" type="button">‹</button><button id="xhsSaveDraft" type="button">▣ 存草稿</button></div><div class="xhs-editor-scroll"><div class="xhs-editor-images"><div id="xhsCreateImageBox" class="xhs-editor-image-grid"><button type="button" class="xhs-add-image" onclick="document.getElementById('xhsCreateImages').click()"><span>＋</span><small>添加图片</small></button></div><input id="xhsCreateImages" type="file" accept="image/*" multiple class="hidden"><small class="xhs-editor-tip">最多添加 9 张图片，第一张作为封面</small></div><input id="xhsCreateTitle" class="xhs-title-input" placeholder="添加标题" maxlength="30"><div class="xhs-body-wrap"><textarea id="xhsCreateText" class="xhs-body-input" placeholder="添加正文，分享你的精彩瞬间…"></textarea><button type="button" id="xhsVoiceDraft" class="xhs-voice-draft">♩</button></div><div class="xhs-editor-tools"><button type="button" id="xhsAddTopic">＋ 添加话题</button><button type="button" id="xhsAddMention">@ 用户</button><button type="button" id="xhsAddPoll">▥ 投票</button></div><input id="xhsCreateTopics" class="xhs-extra-input" placeholder="# 话题标签，多个话题用空格分开"><div class="xhs-editor-row" id="xhsLocationRow"><span>◎　标记地点</span><strong id="xhsLocationText">未设置　›</strong></div><div class="xhs-editor-row" id="xhsVisibilityRow"><span>♧　公开可见</span><strong id="xhsVisibilityText">所有人可见　›</strong></div><div class="xhs-editor-row" id="xhsComponentsRow"><span>▦　添加组件</span><strong>可添加直播　›</strong></div><div class="xhs-editor-extra" id="xhsOptionalFields"><label>发布时间<input id="xhsCreateDate" placeholder="发布时间"></label><label>IP属地<input id="xhsCreateIp" placeholder="北京"></label><label>浏览量<input id="xhsCreateViews" type="number" min="0" value="0"></label><label>评论数<input id="xhsCreateComments" type="number" min="0" value="0"></label><label>点赞数<input id="xhsCreateLikes" type="number" min="0" value="0"></label></div><div class="xhs-editor-bottom"><button type="button" id="xhsScheduleBtn">◷ 发日常 <small>3天可见</small></button><button type="button" id="xhsCreatePublish" class="xhs-publish-main">发笔记</button></div></div><div class="xhs-preview-panel hidden" id="xhsPreviewPanel"><b>发布预览</b><div class="xhs-preview-phone"><div class="xhs-preview-head"><img id="xhsPreviewAvatar" src=""><strong id="xhsPreviewName">momo</strong><button id="xhsPreviewFollow" hidden>关注</button></div><div class="xhs-preview-image" id="xhsPreviewImage">图片预览区域</div><div class="xhs-preview-copy"><h3 id="xhsPreviewTitle">标题</h3><p id="xhsPreviewText">正文</p><div class="xhs-preview-tags" id="xhsPreviewTopics"></div><div class="xhs-preview-meta" id="xhsPreviewMeta"></div><div class="xhs-preview-meta" id="xhsPreviewStats"></div></div></div><button type="button" id="xhsPreviewClose">返回编辑</button></div><div class="hidden"><button id="xhsCreateOwn"></button><button id="xhsCreateVisitor"></button><button id="xhsCreatePublish2"></button></div></section><section class="view xhs" id="xhsDetailView"><div class="xhs-detail-scroll" id="xhsDetailContent"></div><div class="xhs-detail-bottom"><button id="xhsCommentInputBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.1 2.1 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg><span>说点什么...</span></button><button id="xhsLikeBtn" class="xhs-bottom-action" aria-label="点赞"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27S3 19 3 10.5C3 4 11 2 16 9c5-7 13-5 13 1.5C29 19 16 27 16 27Z"/></svg><span id="xhsLikeCount">0</span></button><button id="xhsCollectBtn" class="xhs-bottom-action" aria-label="收藏"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 2.5 4.1 8.3 9.2 1.3-6.65 6.48 1.57 9.15L16 23.4l-8.22 4.33 1.57-9.15L2.7 12.1l9.2-1.3Z"/></svg><span id="xhsCollectCount">0</span></button><button id="xhsCommentsBtn" class="xhs-bottom-action" aria-label="评论"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5C8.5 3.5 2.5 8.8 2.5 15.3c0 3.1 1.5 5.9 4 7.8L5.5 29l6.2-3c1.4.4 2.8.6 4.3.6 7.5 0 13.5-5.3 13.5-11.8S23.5 3.5 16 3.5Z"/><circle cx="10" cy="15.5" r="1.1"/><circle cx="16" cy="15.5" r="1.1"/><circle cx="22" cy="15.5" r="1.1"/></svg><span id="xhsCommentCount">0</span></button></div></section>
@@ -619,13 +624,22 @@ function xhsDmOpenChat(id){
 function xhsDmRenderHistory(){
  const c=xhsDmContact(xhsActiveDmId);if(!c)return;
  const arr=xhsData.dmChats[c.id]||(xhsData.dmChats[c.id]=[]);
- $('xhsDmHistory').innerHTML=arr.length?arr.map(m=>'<div class="xhs-dm-line '+(m.from==='me'?'mine':'')+'"><img src="'+(m.from==='me'?(xhsData.profile.avatar||xhsAvatarSrc()):xhsDmAvatar(c))+'"><div class="xhs-dm-bubble">'+esc(m.text)+'</div></div>').join(''):'<div class="xhs-dm-date">现在可以开始聊天了</div>';
+ const otherView=!!(xhsData.dmPerspective&&xhsData.dmPerspective[c.id]);
+ $('xhsDmPerspective').classList.toggle('active',otherView);
+ $('xhsDmPerspective').textContent=otherView?'⇄ 对方视角':'⇄ 我的视角';
+ $('xhsDmHeadName').textContent=c.name+(otherView?' · 对方视角':'');
+ $('xhsDmHistory').innerHTML=arr.length?arr.map(m=>{
+  const outgoing=(m.from==='other')===otherView;
+  const speakerIsMe=m.from==='me';
+  const avatarSrc=speakerIsMe?(xhsData.profile.avatar||xhsAvatarSrc()):xhsDmAvatar(c);
+  return '<div class="xhs-dm-line '+(outgoing?'mine':'')+'"><img src="'+avatarSrc+'"><div class="xhs-dm-bubble">'+esc(m.text)+'</div></div>';
+ }).join(''):'<div class="xhs-dm-date">现在可以开始聊天了</div>';
  $('xhsDmHistory').scrollTop=$('xhsDmHistory').scrollHeight;
 }
 function xhsDmSend(){
  const c=xhsDmContact(xhsActiveDmId),input=$('xhsDmInput'),textValue=input.value.trim();if(!c||!textValue)return;
  const arr=xhsData.dmChats[c.id]||(xhsData.dmChats[c.id]=[]);
- arr.push({from:'me',text:textValue,time:xhsDmTime()});input.value='';xhsDmSave();xhsDmRenderHistory();xhsDmRenderList();
+ const otherView=!!(xhsData.dmPerspective&&xhsData.dmPerspective[c.id]);arr.push({from:otherView?'other':'me',text:textValue,time:xhsDmTime()});input.value='';xhsDmSave();xhsDmRenderHistory();xhsDmRenderList();
 }
 function xhsDmContactMenu(id){
  const c=xhsDmContact(id);if(!c)return;
@@ -666,6 +680,12 @@ function xhsDmBindNav(){
  document.querySelectorAll('.xhsMsgPublish').forEach(b=>b.onclick=()=>publishXhs());
  $('xhsDmBack').onclick=xhsDmOpenPage;
  $('xhsDmSend').onclick=xhsDmSend;
+ $('xhsDmPerspective').onclick=()=>{
+  if(!xhsActiveDmId)return;
+  xhsData.dmPerspective=xhsData.dmPerspective||{};
+  xhsData.dmPerspective[xhsActiveDmId]=!xhsData.dmPerspective[xhsActiveDmId];
+  xhsDmSave();xhsDmRenderHistory();
+ };
  $('xhsDmInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();xhsDmSend()}};
  $('xhsDmEdit').onclick=()=>xhsDmContactMenu(xhsActiveDmId);
  $('xhsMsgAdd').onclick=()=>xhsDmEditContact(null);
