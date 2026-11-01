@@ -76,7 +76,20 @@
 .xhs-post-grid{min-height:260px;align-content:start;touch-action:pan-y}
 .xhs-post-empty{min-height:260px;display:flex;align-items:center;justify-content:center}
 .xhs-profile-add-hint{grid-column:1/-1;text-align:center;color:#aaa;font-size:12px;padding:22px 10px 34px;pointer-events:none}
- .xhs-gender-badge{display:inline-flex;align-items:center;justify-content:center;width:48px;height:28px;margin-top:12px;border-radius:18px;font-size:19px;font-weight:700}.xhs-gender-badge.female{background:#ffffff22;color:#ff8bb5}.xhs-gender-badge.male{background:#ffffff22;color:#72c7ff}</style></head>
+ .xhs-gender-badge{display:inline-flex;align-items:center;justify-content:center;width:48px;height:28px;margin-top:12px;border-radius:18px;font-size:19px;font-weight:700}.xhs-gender-badge.female{background:#ffffff22;color:#ff8bb5}.xhs-gender-badge.male{background:#ffffff22;color:#72c7ff}</style><style>
+.xhs-crop-overlay{position:fixed;inset:0;z-index:99999;background:#000d;display:flex;flex-direction:column;justify-content:center;color:#fff;padding:18px;box-sizing:border-box}
+.xhs-crop-title{text-align:center;font-size:18px;font-weight:600;margin:12px 0 18px}
+.xhs-crop-frame{position:relative;align-self:center;max-width:100%;overflow:hidden;background:#222;touch-action:none}
+.xhs-crop-frame.avatar{border-radius:50%}
+.xhs-crop-frame img{position:absolute;max-width:none;max-height:none;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.xhs-crop-controls{width:min(360px,100%);margin:20px auto 0}
+.xhs-crop-controls input{width:100%;accent-color:#ff2442}
+.xhs-crop-actions{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding:22px 4px calc(12px + env(safe-area-inset-bottom))}
+.xhs-crop-actions button{border:0;border-radius:24px;padding:12px 25px;font-size:16px;background:transparent;color:white}
+.xhs-crop-actions .save{background:#ff2442;font-weight:600}
+.xhs-crop-tip{text-align:center;color:#ddd;font-size:13px;margin-top:10px}
+.xhs-crop-thumb{font-size:12px;color:#999;margin-top:4px}
+</style></head>
 <body><main class="phone">
 
 <section class="view active launcher" id="launcherView"><div class="launcher-clock" id="launcherClock"></div><div class="launcher-date">我的小手机</div><div class="launcher-grid"><button class="launcher-app" id="launchWechat"><span class="app-icon wechat">微</span><span>微信</span></button><button class="launcher-app" id="launchXhs"><span class="app-icon red">小</span><span>小红书</span></button></div><div class="launcher-hint">点击应用图标打开</div></section>
@@ -157,7 +170,8 @@ function openVisitorNoteComposer(){xhsCreateMode='visitor';publishXhs();xhsCreat
 function editXhsVisitorProfile(){
  const p=xhsData.visitorProfile;
  openModal('<h3>编辑他人主页</h3><label class="xhs-modal-field">头像<input type="file" id="xhsVisitorAvatar" accept="image/*"></label><label class="xhs-modal-field">主页背景<input type="file" id="xhsVisitorBackground" accept="image/*"></label><label class="xhs-modal-field">昵称<input id="xhsVisitorName" value="'+esc(p.name)+'"></label><label class="xhs-modal-field">小红书号<input id="xhsVisitorId" value="'+esc(p.id)+'"></label><label class="xhs-modal-field">IP属地<input id="xhsVisitorIp" value="'+esc(p.ip||'')+'"></label><label class="xhs-modal-field">个人标签<textarea id="xhsVisitorBio">'+esc(p.bio||'')+'</textarea></label><label class="xhs-modal-field">关注数<input id="xhsVisitorFollowing" type="number" min="0" value="'+(p.following||0)+'"></label><label class="xhs-modal-field">粉丝数<input id="xhsVisitorFans" type="number" min="0" value="'+(p.fans||0)+'"></label><label class="xhs-modal-field">获赞与收藏<input id="xhsVisitorLikes" type="number" min="0" value="'+(p.likes||0)+'"></label><label class="xhs-modal-field">性别标识（可选）<select id="xhsVisitorGender"><option value="">不显示</option><option value="男" '+(p.gender==='男'?'selected':'')+'>男</option><option value="女" '+(p.gender==='女'?'selected':'')+'>女</option></select></label><div class="btns"><button onclick="closeModal()">取消</button><button class="xhs-publish" id="xhsSaveVisitor">保存</button></div>');
- $('xhsSaveVisitor').onclick=async()=>{const old={...p};try{p.name=$('xhsVisitorName').value.trim()||'未命名用户';p.id=$('xhsVisitorId').value.trim();p.ip=$('xhsVisitorIp').value.trim();p.bio=$('xhsVisitorBio').value.trim();p.following=Number($('xhsVisitorFollowing').value)||0;p.fans=Number($('xhsVisitorFans').value)||0;p.likes=Number($('xhsVisitorLikes').value)||0;p.gender=$('xhsVisitorGender').value;const a=$('xhsVisitorAvatar').files[0],b=$('xhsVisitorBackground').files[0];if(a)p.avatar=await xhsCompressImage(a,640,.7);if(b)p.background=await xhsCompressImage(b,1400,.65);saveXhs();closeModal();renderXhsProfile()}catch(e){Object.assign(p,old);alert('保存失败：'+(e.message||'图片处理失败'))}};
+ ['xhsVisitorAvatar','xhsVisitorBackground'].forEach((id,i)=>$(id).onchange=async()=>{const file=$(id).files[0];if(!file)return;try{xhsPendingCrops[i?'visitorBackground':'visitorAvatar']=await xhsOpenCropper(file,i?'background':'avatar')}catch(e){if(e.message!=='已取消裁剪')alert(e.message);$(id).value=''}});
+ $('xhsSaveVisitor').onclick=async()=>{const old={...p};try{p.name=$('xhsVisitorName').value.trim()||'未命名用户';p.id=$('xhsVisitorId').value.trim();p.ip=$('xhsVisitorIp').value.trim();p.bio=$('xhsVisitorBio').value.trim();p.following=Number($('xhsVisitorFollowing').value)||0;p.fans=Number($('xhsVisitorFans').value)||0;p.likes=Number($('xhsVisitorLikes').value)||0;p.gender=$('xhsVisitorGender').value;if(xhsPendingCrops.visitorAvatar)p.avatar=xhsPendingCrops.visitorAvatar;if(xhsPendingCrops.visitorBackground)p.background=xhsPendingCrops.visitorBackground;xhsPendingCrops.visitorAvatar=xhsPendingCrops.visitorBackground=null;saveXhs();closeModal();renderXhsProfile()}catch(e){Object.assign(p,old);alert('保存失败：'+(e.message||'图片处理失败'))}};
 }
 
 function deleteXhsPost(id){const p=xhsData.posts.find(x=>x.id===id);if(!p)return;if(!confirm('确定删除这篇笔记吗？删除后无法恢复。'))return;xhsData.posts=xhsData.posts.filter(x=>x.id!==id);saveXhs();renderXhsFeed();renderXhsProfile();showView('xhsProfileView')}
@@ -169,7 +183,8 @@ function initXhsComposer(){['xhsCreateTitle','xhsCreateText','xhsCreateTopics','
 function editXhsProfile(){
  const p=xhsData.profile;
  openModal('<h3>编辑主页</h3><label class="xhs-modal-field">头像<input type="file" id="xhsAvatarFile" accept="image/*"></label><label class="xhs-modal-field">主页背景<input type="file" id="xhsBackgroundFile" accept="image/*"></label><label class="xhs-modal-field">昵称<input id="xhsName" value="'+esc(p.name||'momo')+'"></label><label class="xhs-modal-field">小红书号<input id="xhsId" value="'+esc(p.id||'')+'"></label><label class="xhs-modal-field">IP属地<input id="xhsIpInput" value="'+esc(p.ip||'北京')+'"></label><label class="xhs-modal-field">简介<textarea id="xhsBioInput">'+esc(p.bio||'')+'</textarea></label><label class="xhs-modal-field">关注数<input id="xhsFollowingInput" type="number" min="0" value="'+(p.following||0)+'"></label><label class="xhs-modal-field">粉丝数<input id="xhsFansInput" type="number" min="0" value="'+(p.fans||0)+'"></label><label class="xhs-modal-field">获赞与收藏数<input id="xhsLikesInput" type="number" min="0" value="'+(p.likes||0)+'"></label><label class="xhs-modal-field">性别标识（可选）<select id="xhsGenderInput"><option value="">不显示</option><option value="男" '+(p.gender==='男'?'selected':'')+'>男</option><option value="女" '+(p.gender==='女'?'selected':'')+'>女</option></select></label><div class="btns"><button onclick="closeModal()">取消</button><button class="xhs-publish" id="xhsSaveProfile">保存</button></div><button type="button" id="xhsSwitchVisitor" style="width:100%;margin-top:10px;padding:11px;border:1px solid #ff2442;border-radius:8px;background:#fff;color:#ff2442">切换成别人的主页</button>');
- $('xhsSaveProfile').onclick=async()=>{const old={...p};try{p.name=$('xhsName').value.trim()||'momo';p.id=$('xhsId').value.trim();p.ip=$('xhsIpInput').value.trim();p.bio=$('xhsBioInput').value.trim();p.following=Number($('xhsFollowingInput').value)||0;p.fans=Number($('xhsFansInput').value)||0;p.likes=Number($('xhsLikesInput').value)||0;p.gender=$('xhsGenderInput').value;const a=$('xhsAvatarFile').files[0],b=$('xhsBackgroundFile').files[0];if(a)p.avatar=await xhsCompressImage(a,640,.7);if(b)p.background=await xhsCompressImage(b,1400,.65);saveXhs();closeModal();renderXhsProfile();renderXhsFeed()}catch(e){Object.assign(p,old);alert('保存失败：'+(e.message||'图片处理失败'))}};
+ ['xhsAvatarFile','xhsBackgroundFile'].forEach((id,i)=>$(id).onchange=async()=>{const file=$(id).files[0];if(!file)return;try{xhsPendingCrops[i?'background':'avatar']=await xhsOpenCropper(file,i?'background':'avatar')}catch(e){if(e.message!=='已取消裁剪')alert(e.message);$(id).value=''}});
+ $('xhsSaveProfile').onclick=async()=>{const old={...p};try{p.name=$('xhsName').value.trim()||'momo';p.id=$('xhsId').value.trim();p.ip=$('xhsIpInput').value.trim();p.bio=$('xhsBioInput').value.trim();p.following=Number($('xhsFollowingInput').value)||0;p.fans=Number($('xhsFansInput').value)||0;p.likes=Number($('xhsLikesInput').value)||0;p.gender=$('xhsGenderInput').value;if(xhsPendingCrops.avatar)p.avatar=xhsPendingCrops.avatar;if(xhsPendingCrops.background)p.background=xhsPendingCrops.background;xhsPendingCrops.avatar=xhsPendingCrops.background=null;saveXhs();closeModal();renderXhsProfile();renderXhsFeed()}catch(e){Object.assign(p,old);alert('保存失败：'+(e.message||'图片处理失败'))}};
  $('xhsSwitchVisitor').onclick=()=>{closeModal();setXhsProfileMode('visitor')};
 }
 
@@ -420,4 +435,44 @@ renderChats();renderContacts();renderMe();
  };
  renderXhsProfile();
 })();
+
+/* Fixed-ratio image cropper for profile avatar and cover */
+const xhsPendingCrops={avatar:null,background:null,visitorAvatar:null,visitorBackground:null};
+function xhsOpenCropper(file,kind){
+ return new Promise((resolve,reject)=>{
+  if(!file||!file.type.startsWith('image/')){reject(new Error('请选择图片'));return}
+  const url=URL.createObjectURL(file),avatar=kind.toLowerCase().includes('avatar');
+  const ratio=avatar?1:2;
+  const frameW=Math.min(340,window.innerWidth-44),frameH=frameW/ratio;
+  const overlay=document.createElement('div');overlay.className='xhs-crop-overlay';
+  overlay.innerHTML='<div class="xhs-crop-title">'+(avatar?'调整头像':'调整主页背景')+'</div><div class="xhs-crop-frame '+(avatar?'avatar':'')+'" style="width:'+frameW+'px;height:'+frameH+'px"><img draggable="false"></div><div class="xhs-crop-tip">拖动图片调整位置，滑动下方滑块调整大小</div><div class="xhs-crop-controls"><input type="range" min="1" max="3" step=".01" value="1"></div><div class="xhs-crop-actions"><button type="button" class="cancel">取消</button><button type="button" class="save">保存</button></div>';
+  document.body.appendChild(overlay);
+  const frame=overlay.querySelector('.xhs-crop-frame'),img=overlay.querySelector('img'),slider=overlay.querySelector('input');
+  let base=1,zoom=1,left=0,top=0,drag=null,done=false;
+  const finish=(value,error)=>{if(done)return;done=true;URL.revokeObjectURL(url);overlay.remove();error?reject(error):resolve(value)};
+  img.onload=()=>{
+    base=Math.max(frameW/img.naturalWidth,frameH/img.naturalHeight);
+    const draw=()=>{const w=img.naturalWidth*base*zoom,hh=img.naturalHeight*base*zoom;left=Math.min(0,Math.max(frameW-w,left));top=Math.min(0,Math.max(frameH-hh,top));img.style.width=w+'px';img.style.height=hh+'px';img.style.left=left+'px';img.style.top=top+'px'};
+    left=(frameW-img.naturalWidth*base)/2;top=(frameH-img.naturalHeight*base)/2;draw();
+    slider.oninput=()=>{const old=zoom;zoom=Number(slider.value);const cx=frameW/2,cy=frameH/2;left=cx-(cx-left)*(zoom/old);top=cy-(cy-top)*(zoom/old);draw()};
+    frame.onpointerdown=e=>{drag={x:e.clientX,y:e.clientY,left,top};frame.setPointerCapture(e.pointerId)};
+    frame.onpointermove=e=>{if(!drag)return;left=drag.left+e.clientX-drag.x;top=drag.top+e.clientY-drag.y;draw()};
+    frame.onpointerup=frame.onpointercancel=()=>{drag=null};
+  };
+  img.onerror=()=>finish(null,new Error('图片读取失败'));
+  img.src=url;
+  overlay.querySelector('.cancel').onclick=()=>finish(null,new Error('已取消裁剪'));
+  overlay.querySelector('.save').onclick=()=>{
+    try{
+      const out=document.createElement('canvas'),size=avatar?640:1400;
+      out.width=size;out.height=size/ratio;
+      const ctx=out.getContext('2d'),scale=base*zoom;
+      const sx=Math.max(0,-left/scale),sy=Math.max(0,-top/scale);
+      const sw=frameW/scale,sh=frameH/scale;
+      ctx.drawImage(img,sx,sy,sw,sh,0,0,out.width,out.height);
+      finish(out.toDataURL('image/jpeg',.82));
+    }catch(e){finish(null,e)}
+  };
+ });
+}
 </script></body></html>
