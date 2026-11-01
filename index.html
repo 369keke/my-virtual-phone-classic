@@ -244,7 +244,7 @@ function renderXhsProfile(){
  const posts=own?xhsData.posts:(xhsVisitorTab==='favorites'?xhsData.visitorFavorites:xhsData.visitorPosts);
  const grid=$('xhsMyPosts');
  if(posts.length){
-  const cols=[document.createElement('div'),document.createElement('div')];cols.forEach(col=>{col.className='xhs-profile-column';grid.appendChild(col)});grid.innerHTML='';
+  grid.innerHTML='';const cols=[document.createElement('div'),document.createElement('div')];cols.forEach(col=>{col.className='xhs-profile-column';grid.appendChild(col)});
   posts.forEach((post,index)=>{
    const src=(post.images&&post.images[0])||post.image||'';
    const authorAvatar=p.avatar||(own?xhsAvatarSrc():xhsDefaultAvatarSrc());
