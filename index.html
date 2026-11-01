@@ -93,6 +93,47 @@
 /* Feed and profile thumbnails use only 4:3, 1:1 or 3:4; detail keeps source ratio */
 .xhs-feed .xhs-card-image,.xhs-profile-post .xhs-card-image{display:block;width:100%;height:auto;min-height:0;max-height:none;object-fit:cover;background:#f1f1f1}
 .xhs-feed .xhs-card-image,.xhs-profile-post .xhs-card-image{aspect-ratio:1/1}
+</style>
+<style>
+/* Xiaohongshu-style message center and direct messages */
+.xhs-msg-page{background:#fff;display:flex;flex-direction:column;min-height:0;flex:1;overflow:hidden}
+.xhs-msg-head{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;flex-shrink:0;background:#fff}
+.xhs-msg-head h2{font-size:20px;font-weight:500;margin:0}
+.xhs-msg-head button{border:0;background:none;font-size:27px;padding:4px 8px}
+.xhs-msg-scroll{flex:1;min-height:0;overflow:auto;background:#fff}
+.xhs-msg-shortcuts{display:grid;grid-template-columns:repeat(3,1fr);padding:22px 10px 28px;text-align:center}
+.xhs-msg-shortcut{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:12px;font-size:15px;color:#333}
+.xhs-msg-shortcut .ico{width:64px;height:64px;border-radius:22px;display:grid;place-items:center;font-size:32px}
+.xhs-msg-shortcut:nth-child(1) .ico{background:#fff0f0;color:#ff5967}
+.xhs-msg-shortcut:nth-child(2) .ico{background:#eaf2ff;color:#2585ed}
+.xhs-msg-shortcut:nth-child(3) .ico{background:#e7fbf4;color:#11c99a}
+.xhs-dm-row{height:94px;display:flex;align-items:center;gap:14px;padding:12px 20px;border:0;background:#fff;width:100%;text-align:left}
+.xhs-dm-avatar{width:58px;height:58px;border-radius:50%;object-fit:cover;background:#eee;flex:none}
+.xhs-dm-row-main{min-width:0;flex:1}
+.xhs-dm-row-name{font-size:17px;color:#222}
+.xhs-dm-row-preview{font-size:14px;color:#999;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.xhs-dm-time{font-size:12px;color:#aaa;align-self:flex-start;margin-top:9px}
+.xhs-msg-blank{height:190px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:13px;touch-action:pan-y}
+.xhs-dm-view{background:#fff;display:flex;flex-direction:column;min-height:0;flex:1;overflow:hidden}
+.xhs-dm-head{height:58px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid #f3f3f3;flex:none}
+.xhs-dm-head button{border:0;background:none;font-size:28px;padding:2px 4px}
+.xhs-dm-head img{width:38px;height:38px;border-radius:50%;object-fit:cover}
+.xhs-dm-head strong{font-size:17px;font-weight:500;flex:1}
+.xhs-dm-history{flex:1;min-height:0;overflow:auto;background:#fff;padding:14px 16px 20px}
+.xhs-dm-date{text-align:center;color:#aaa;font-size:12px;margin:15px 0 22px}
+.xhs-dm-line{display:flex;align-items:flex-start;gap:10px;margin:18px 0}
+.xhs-dm-line.mine{flex-direction:row-reverse}
+.xhs-dm-line img{width:42px;height:42px;border-radius:50%;object-fit:cover;flex:none}
+.xhs-dm-bubble{max-width:76%;padding:11px 14px;border-radius:17px;background:#f1f1f1;color:#222;font-size:16px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.xhs-dm-line.mine .xhs-dm-bubble{background:#1688f8;color:#fff}
+.xhs-dm-compose{display:flex;align-items:flex-end;gap:8px;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:#f7f7f7;border-top:1px solid #eee;flex:none}
+.xhs-dm-compose textarea{flex:1;min-height:42px;max-height:110px;resize:none;border:0;border-radius:22px;background:#fff;padding:11px 15px;font-size:15px;outline:none}
+.xhs-dm-compose button{border:0;border-radius:22px;background:#1688f8;color:#fff;padding:10px 17px;font-size:15px}
+.xhs-dm-edit{display:flex;flex-direction:column;gap:12px}
+.xhs-dm-edit label{display:flex;flex-direction:column;gap:6px;font-size:14px;color:#666}
+.xhs-dm-edit input{border:1px solid #ddd;border-radius:8px;padding:10px;font-size:15px}
+.xhs-dm-edit .avatar-preview{width:76px;height:76px;border-radius:50%;object-fit:cover;background:#eee;align-self:center}
+.xhs-dm-edit .avatar-pick{border:1px solid #ddd;border-radius:18px;padding:8px 12px;background:#fff}
 </style></head>
 <body><main class="phone">
 
@@ -101,6 +142,29 @@
 <section class="view" id="chatsView"><div class="search">⌕　搜索</div><div class="list" id="chatList"></div></section>
 <section class="view" id="contactsView"><div class="list" id="contactList"></div></section>
 <section class="view xhs" id="xhsHomeView"><div class="xhs-top"><button id="xhsMessage">▢</button><button>关注</button><button class="active">发现</button><button>同城</button><button id="xhsSearch">⌕</button></div><div class="xhs-cats"><button>推荐</button><button>RED</button><button>直播</button><button>热点</button><button>短剧</button><button>求助</button></div><div class="xhs-feed" id="xhsFeed"><div class="xhs-empty">这里还没有笔记<br>点击下方「＋」发布你的第一篇笔记</div></div><nav class="xhs-bottom"><button id="xhsHomeTab">首页</button><button>市集</button><button id="xhsPublish" class="xhs-plus" type="button" aria-label="发布笔记">＋</button><button>消息</button><button id="xhsMeTab">我</button></nav></section>
+
+<section class="view xhs" id="xhsMessagesView">
+ <div class="xhs-msg-page">
+  <div class="xhs-msg-head"><span style="width:40px"></span><h2>消息</h2><div><button id="xhsMsgSearch" aria-label="搜索">⌕</button><button id="xhsMsgAdd" aria-label="添加联系人">＋</button></div></div>
+  <div class="xhs-msg-scroll" id="xhsMsgScroll">
+   <div class="xhs-msg-shortcuts">
+    <button class="xhs-msg-shortcut" data-shortcut="likes"><span class="ico">♥</span><b>赞和收藏</b></button>
+    <button class="xhs-msg-shortcut" data-shortcut="follows"><span class="ico">●</span><b>新增关注</b></button>
+    <button class="xhs-msg-shortcut" data-shortcut="comments"><span class="ico">●●</span><b>评论和@</b></button>
+   </div>
+   <div id="xhsMsgContacts"></div>
+   <div class="xhs-msg-blank" id="xhsMsgBlank">长按这里，添加聊天人物</div>
+  </div>
+ </div>
+ <nav class="xhs-bottom"><button class="xhsMsgGoHome">首页</button><button>市集</button><button class="xhs-plus xhsMsgPublish">＋</button><button class="active">消息</button><button class="xhsMsgGoMe">我</button></nav>
+</section>
+<section class="view xhs" id="xhsDmChatView">
+ <div class="xhs-dm-view">
+  <div class="xhs-dm-head"><button id="xhsDmBack">‹</button><img id="xhsDmHeadAvatar" src=""><strong id="xhsDmHeadName">聊天</strong><button id="xhsDmEdit">···</button></div>
+  <div class="xhs-dm-history" id="xhsDmHistory"></div>
+  <div class="xhs-dm-compose"><textarea id="xhsDmInput" rows="1" placeholder="发消息…"></textarea><button id="xhsDmSend">发送</button></div>
+ </div>
+</section>
 <section class="view xhs-create" id="xhsCreateView"><div class="xhs-editor-head"><button id="xhsCreateCancel" type="button">‹</button><button id="xhsSaveDraft" type="button">▣ 存草稿</button></div><div class="xhs-editor-scroll"><div class="xhs-editor-images"><div id="xhsCreateImageBox" class="xhs-editor-image-grid"><button type="button" class="xhs-add-image" onclick="document.getElementById('xhsCreateImages').click()"><span>＋</span><small>添加图片</small></button></div><input id="xhsCreateImages" type="file" accept="image/*" multiple class="hidden"><small class="xhs-editor-tip">最多添加 9 张图片，第一张作为封面</small></div><input id="xhsCreateTitle" class="xhs-title-input" placeholder="添加标题" maxlength="30"><div class="xhs-body-wrap"><textarea id="xhsCreateText" class="xhs-body-input" placeholder="添加正文，分享你的精彩瞬间…"></textarea><button type="button" id="xhsVoiceDraft" class="xhs-voice-draft">♩</button></div><div class="xhs-editor-tools"><button type="button" id="xhsAddTopic">＋ 添加话题</button><button type="button" id="xhsAddMention">@ 用户</button><button type="button" id="xhsAddPoll">▥ 投票</button></div><input id="xhsCreateTopics" class="xhs-extra-input" placeholder="# 话题标签，多个话题用空格分开"><div class="xhs-editor-row" id="xhsLocationRow"><span>◎　标记地点</span><strong id="xhsLocationText">未设置　›</strong></div><div class="xhs-editor-row" id="xhsVisibilityRow"><span>♧　公开可见</span><strong id="xhsVisibilityText">所有人可见　›</strong></div><div class="xhs-editor-row" id="xhsComponentsRow"><span>▦　添加组件</span><strong>可添加直播　›</strong></div><div class="xhs-editor-extra" id="xhsOptionalFields"><label>发布时间<input id="xhsCreateDate" placeholder="发布时间"></label><label>IP属地<input id="xhsCreateIp" placeholder="北京"></label><label>浏览量<input id="xhsCreateViews" type="number" min="0" value="0"></label><label>评论数<input id="xhsCreateComments" type="number" min="0" value="0"></label><label>点赞数<input id="xhsCreateLikes" type="number" min="0" value="0"></label></div><div class="xhs-editor-bottom"><button type="button" id="xhsScheduleBtn">◷ 发日常 <small>3天可见</small></button><button type="button" id="xhsCreatePublish" class="xhs-publish-main">发笔记</button></div></div><div class="xhs-preview-panel hidden" id="xhsPreviewPanel"><b>发布预览</b><div class="xhs-preview-phone"><div class="xhs-preview-head"><img id="xhsPreviewAvatar" src=""><strong id="xhsPreviewName">momo</strong><button id="xhsPreviewFollow" hidden>关注</button></div><div class="xhs-preview-image" id="xhsPreviewImage">图片预览区域</div><div class="xhs-preview-copy"><h3 id="xhsPreviewTitle">标题</h3><p id="xhsPreviewText">正文</p><div class="xhs-preview-tags" id="xhsPreviewTopics"></div><div class="xhs-preview-meta" id="xhsPreviewMeta"></div><div class="xhs-preview-meta" id="xhsPreviewStats"></div></div></div><button type="button" id="xhsPreviewClose">返回编辑</button></div><div class="hidden"><button id="xhsCreateOwn"></button><button id="xhsCreateVisitor"></button><button id="xhsCreatePublish2"></button></div></section><section class="view xhs" id="xhsDetailView"><div class="xhs-detail-scroll" id="xhsDetailContent"></div><div class="xhs-detail-bottom"><button id="xhsCommentInputBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2.1 2.1 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg><span>说点什么...</span></button><button id="xhsLikeBtn" class="xhs-bottom-action" aria-label="点赞"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27S3 19 3 10.5C3 4 11 2 16 9c5-7 13-5 13 1.5C29 19 16 27 16 27Z"/></svg><span id="xhsLikeCount">0</span></button><button id="xhsCollectBtn" class="xhs-bottom-action" aria-label="收藏"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 2.5 4.1 8.3 9.2 1.3-6.65 6.48 1.57 9.15L16 23.4l-8.22 4.33 1.57-9.15L2.7 12.1l9.2-1.3Z"/></svg><span id="xhsCollectCount">0</span></button><button id="xhsCommentsBtn" class="xhs-bottom-action" aria-label="评论"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.5C8.5 3.5 2.5 8.8 2.5 15.3c0 3.1 1.5 5.9 4 7.8L5.5 29l6.2-3c1.4.4 2.8.6 4.3.6 7.5 0 13.5-5.3 13.5-11.8S23.5 3.5 16 3.5Z"/><circle cx="10" cy="15.5" r="1.1"/><circle cx="16" cy="15.5" r="1.1"/><circle cx="22" cy="15.5" r="1.1"/></svg><span id="xhsCommentCount">0</span></button></div></section>
 <section class="view xhs" id="xhsProfileView"><div class="xhs-profile"><div class="xhs-profile-hero" id="xhsProfileHero"><div class="xhs-profile-tools"><button id="xhsBackHome" style="background:none;border:0;color:white;font-size:22px">☰</button><div><button id="xhsEditProfile" style="border:0;border-radius:18px;padding:5px 9px;font-size:12px">✎ 编辑</button>　<button style="border:0;background:none;color:white;font-size:22px">↗</button></div></div><div class="xhs-profile-main"><img id="xhsProfileAvatar" class="xhs-avatar" src="" alt=""><div><div class="xhs-profile-name" id="xhsProfileName">可可领</div><div class="xhs-profile-meta" id="xhsProfileId">小红书号：未设置</div><div class="xhs-profile-meta">IP：<span id="xhsProfileIp">北京</span></div></div></div><div class="xhs-stats"><span><b id="xhsFollowing">0</b> 关注</span><span><b id="xhsFans">0</b> 粉丝</span><span><b id="xhsProfileLikes">0</b> 获赞与收藏</span></div><div class="xhs-bio" id="xhsBio">介绍一下自己吧</div><div id="xhsGenderBadge" class="xhs-gender-badge" style="display:none"></div><div id="xhsVisitorActions" style="display:none;gap:8px;margin-top:14px"><button type="button" id="xhsVisitorFollow" style="flex:1;height:38px;border:0;border-radius:8px;color:#fff;background:#ff2442">关注</button><button type="button" id="xhsVisitorMessage" style="flex:1;height:38px;border:1px solid #ffffff55;border-radius:8px;color:#fff;background:#ffffff22">发私信</button></div></div><div class="xhs-profile-tabs" id="xhsProfileTabs"><button type="button" class="xhs-profile-tab active" data-profile-tab="notes">笔记</button><button type="button" class="xhs-profile-tab" data-profile-tab="comments">评论</button><button type="button" class="xhs-profile-tab" data-profile-tab="favorites">收藏</button><button type="button" class="xhs-profile-tab" data-profile-tab="liked">赞过</button><button type="button" class="xhs-profile-search">⌕</button></div><div class="xhs-profile-tabs" id="xhsOwnSubTabs" style="height:42px;justify-content:flex-start;padding-left:20px;font-size:13px">公开 0　　私密 0　　合集 0</div><div class="xhs-post-grid" id="xhsMyPosts"><div class="xhs-post-empty">还没有发布笔记</div></div></div><nav class="xhs-bottom"><button id="xhsProfileHome">首页</button><button>市集</button><button class="xhs-plus" id="xhsPublish2">＋</button><button>消息</button><button>我</button></nav></section><section class="view" id="meView"><div style="padding:22px 16px;background:white;display:flex;align-items:center;gap:14px" id="myProfile"></div><div class="list" style="margin-top:12px"><button class="row" id="managePeople"><span class="avatar">👥</span><span class="row-main">人物管理</span><span>›</span></button><button class="row" id="createGroup"><span class="avatar">💬</span><span class="row-main">发起群聊</span><span>›</span></button><button class="row" id="backupData"><span class="avatar">📦</span><span class="row-main">数据备份与恢复<div class="small">导出或导入人物、头像和聊天记录</div></span><span>›</span></button></div></section>
 <nav class="tabs" id="tabs"><button class="on" data-view="chatsView"><b>▣</b>微信</button><button data-view="contactsView"><b>♙</b>通讯录</button><button data-view="meView"><b>◉</b>我</button></nav>
@@ -132,7 +196,7 @@ function renderChats(){const box=$('chatList');if(!db.chats.length){box.innerHTM
 function renderContacts(){const box=$('contactList');if(!db.people.length){box.innerHTML='<div class="empty">还没有人物，点击右上角 ＋ 添加</div>';return}box.innerHTML=db.people.map(p=>'<button class="row" data-person="'+p.id+'">'+avatar(p)+'<span class="row-main"><span class="row-title">'+esc(p.name)+'</span><span class="row-sub">'+(p.id===db.meId?'我方身份':'联系人')+'</span></span></button>').join('');box.querySelectorAll('[data-person]').forEach(b=>b.onclick=()=>personMenu(b.dataset.person))}
 function renderMe(){const p=person(db.meId);$('myProfile').innerHTML=(p?avatar(p):'<span class="avatar">🙂</span>')+'<div><b>'+(p?esc(p.name):'尚未设置我方身份')+'</b><div class="small" style="margin-top:6px">当前聊天发送身份</div></div><button style="margin-left:auto;border:0;background:none" id="chooseMe">切换 ›</button>';$('chooseMe').onclick=chooseMe}
 
-const XHS_KEY='xhs_simulator_v1';let xhsData={profile:{name:'momo',id:'',bio:'',avatar:'',background:'',following:0,fans:0,likes:0},posts:[]};try{xhsData=Object.assign(xhsData,JSON.parse(localStorage.getItem(XHS_KEY))||{});xhsData.profile=Object.assign({name:'momo',id:'',bio:'',avatar:'',background:'',ip:'北京',gender:'',following:0,fans:0,likes:0},xhsData.profile||{});xhsData.visitorProfile=Object.assign({name:'momo',id:'123456',bio:'个人标签',avatar:'',background:'',ip:'北京',gender:'',following:99,fans:99,likes:99},xhsData.visitorProfile||{});if(xhsData.visitorProfile.name==='葵葵今天困了吗'&&xhsData.visitorProfile.id==='320218728'){Object.assign(xhsData.visitorProfile,{name:'momo',id:'123456',bio:'个人标签',ip:'北京',following:99,fans:99,likes:99})}xhsData.visitorProfile.name=xhsData.visitorProfile.name||'momo';xhsData.visitorProfile.id=xhsData.visitorProfile.id||'123456';xhsData.visitorProfile.bio=xhsData.visitorProfile.bio||'个人标签';xhsData.visitorProfile.ip=xhsData.visitorProfile.ip||'北京';xhsData.visitorPosts=Array.isArray(xhsData.visitorPosts)?xhsData.visitorPosts:[];xhsData.visitorFavorites=Array.isArray(xhsData.visitorFavorites)?xhsData.visitorFavorites:[];xhsData.posts=Array.isArray(xhsData.posts)?xhsData.posts:[];if(xhsData.profile.name==='可可领')xhsData.profile.name='momo'}catch(e){}const saveXhs=()=>localStorage.setItem(XHS_KEY,JSON.stringify(xhsData));
+const XHS_KEY='xhs_simulator_v1';let xhsData={profile:{name:'momo',id:'',bio:'',avatar:'',background:'',following:0,fans:0,likes:0},posts:[]};try{xhsData=Object.assign(xhsData,JSON.parse(localStorage.getItem(XHS_KEY))||{});xhsData.profile=Object.assign({name:'momo',id:'',bio:'',avatar:'',background:'',ip:'北京',gender:'',following:0,fans:0,likes:0},xhsData.profile||{});xhsData.visitorProfile=Object.assign({name:'momo',id:'123456',bio:'个人标签',avatar:'',background:'',ip:'北京',gender:'',following:99,fans:99,likes:99},xhsData.visitorProfile||{});if(xhsData.visitorProfile.name==='葵葵今天困了吗'&&xhsData.visitorProfile.id==='320218728'){Object.assign(xhsData.visitorProfile,{name:'momo',id:'123456',bio:'个人标签',ip:'北京',following:99,fans:99,likes:99})}xhsData.visitorProfile.name=xhsData.visitorProfile.name||'momo';xhsData.visitorProfile.id=xhsData.visitorProfile.id||'123456';xhsData.visitorProfile.bio=xhsData.visitorProfile.bio||'个人标签';xhsData.visitorProfile.ip=xhsData.visitorProfile.ip||'北京';xhsData.visitorPosts=Array.isArray(xhsData.visitorPosts)?xhsData.visitorPosts:[];xhsData.messageContacts=Array.isArray(xhsData.messageContacts)?xhsData.messageContacts:[];xhsData.dmChats=xhsData.dmChats&&typeof xhsData.dmChats==='object'?xhsData.dmChats:{};xhsData.visitorFavorites=Array.isArray(xhsData.visitorFavorites)?xhsData.visitorFavorites:[];xhsData.posts=Array.isArray(xhsData.posts)?xhsData.posts:[];if(xhsData.profile.name==='可可领')xhsData.profile.name='momo'}catch(e){}const saveXhs=()=>localStorage.setItem(XHS_KEY,JSON.stringify(xhsData));
 async function xhsCompressImage(file,maxSide=1280,quality=.72){if(!file||!file.type.startsWith('image/'))throw new Error('请选择图片文件');let bmp;if(window.createImageBitmap){bmp=await createImageBitmap(file)}else{bmp=await new Promise((resolve,reject)=>{const im=new Image(),u=URL.createObjectURL(file);im.onload=()=>{URL.revokeObjectURL(u);resolve(im)};im.onerror=reject;im.src=u})}const scale=Math.min(1,maxSide/Math.max(bmp.width,bmp.height));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(bmp.width*scale));canvas.height=Math.max(1,Math.round(bmp.height*scale));const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(bmp,0,0,canvas.width,canvas.height);if(bmp.close)bmp.close();return await new Promise((resolve,reject)=>canvas.toBlob(blob=>{if(!blob){reject(new Error('图片压缩失败'));return}const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(blob)},'image/jpeg',quality))}
 function openXhs(){showView('xhsHomeView');renderXhsFeed()}
 let currentXhsPostId=null;
@@ -501,4 +565,86 @@ const xhsOriginalRenderFeed=renderXhsFeed;
 renderXhsFeed=function(){xhsOriginalRenderFeed();xhsApplyThumbnailRatios($('xhsFeed'))};
 const xhsOriginalRenderProfile=renderXhsProfile;
 renderXhsProfile=function(){xhsOriginalRenderProfile();xhsApplyThumbnailRatios($('xhsMyPosts'))};
+
+/* XHS message center: local simulated DMs */
+let xhsActiveDmId=null;
+function xhsDmSave(){saveXhs()}
+function xhsDmContact(id){return xhsData.messageContacts.find(c=>c.id===id)}
+function xhsDmAvatar(c){return c?.avatar||xhsDefaultAvatarSrc()}
+function xhsDmTime(){return new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}
+function xhsDmOpenPage(){showView('xhsMessagesView');xhsDmRenderList()}
+function xhsDmRenderList(){
+ const box=$('xhsMsgContacts');box.innerHTML=xhsData.messageContacts.map(c=>{
+  const arr=xhsData.dmChats[c.id]||[],last=arr[arr.length-1];
+  return '<button class="xhs-dm-row" data-dm-id="'+esc(c.id)+'"><img class="xhs-dm-avatar" src="'+xhsDmAvatar(c)+'"><span class="xhs-dm-row-main"><span class="xhs-dm-row-name">'+esc(c.name)+'</span><span class="xhs-dm-row-preview">'+esc(last?.text||'点击开始聊天')+'</span></span><span class="xhs-dm-time">'+esc(last?.time||'')+'</span></button>';
+ }).join('');
+ box.querySelectorAll('[data-dm-id]').forEach(row=>{
+  row.onclick=()=>xhsDmOpenChat(row.dataset.dmId);
+  bindXhsLongPress(row,()=>xhsDmContactMenu(row.dataset.dmId));
+ });
+ const blank=$('xhsMsgBlank');blank.style.display=xhsData.messageContacts.length?'flex':'flex';
+}
+function xhsDmOpenChat(id){
+ const c=xhsDmContact(id);if(!c)return;xhsActiveDmId=id;
+ $('xhsDmHeadName').textContent=c.name;$('xhsDmHeadAvatar').src=xhsDmAvatar(c);
+ showView('xhsDmChatView');xhsDmRenderHistory();
+}
+function xhsDmRenderHistory(){
+ const c=xhsDmContact(xhsActiveDmId);if(!c)return;
+ const arr=xhsData.dmChats[c.id]||(xhsData.dmChats[c.id]=[]);
+ $('xhsDmHistory').innerHTML=arr.length?arr.map(m=>'<div class="xhs-dm-line '+(m.from==='me'?'mine':'')+'"><img src="'+(m.from==='me'?(xhsData.profile.avatar||xhsAvatarSrc()):xhsDmAvatar(c))+'"><div class="xhs-dm-bubble">'+esc(m.text)+'</div></div>').join(''):'<div class="xhs-dm-date">现在可以开始聊天了</div>';
+ $('xhsDmHistory').scrollTop=$('xhsDmHistory').scrollHeight;
+}
+function xhsDmSend(){
+ const c=xhsDmContact(xhsActiveDmId),input=$('xhsDmInput'),textValue=input.value.trim();if(!c||!textValue)return;
+ const arr=xhsData.dmChats[c.id]||(xhsData.dmChats[c.id]=[]);
+ arr.push({from:'me',text:textValue,time:xhsDmTime()});input.value='';xhsDmSave();xhsDmRenderHistory();xhsDmRenderList();
+}
+function xhsDmContactMenu(id){
+ const c=xhsDmContact(id);if(!c)return;
+ openModal('<h3>聊天设置</h3><div class="btns"><button id="xhsDmEditPerson">修改头像和名字</button><button id="xhsDmDeletePerson" style="color:#e44">删除人物</button><button onclick="closeModal()">取消</button></div>');
+ $('xhsDmEditPerson').onclick=()=>{closeModal();xhsDmEditContact(id)};
+ $('xhsDmDeletePerson').onclick=()=>{if(!confirm('确定删除这个聊天人物和聊天记录吗？'))return;xhsData.messageContacts=xhsData.messageContacts.filter(x=>x.id!==id);delete xhsData.dmChats[id];xhsDmSave();closeModal();xhsDmRenderList()};
+}
+function xhsDmEditContact(id){
+ const c=id?xhsDmContact(id):{id:'',name:'',avatar:''};if(id&&!c)return;
+ let crop=null;
+ openModal('<h3>'+(id?'修改聊天人物':'添加聊天人物')+'</h3><div class="xhs-dm-edit"><img class="avatar-preview" id="xhsDmAvatarPreview" src="'+(c.avatar||xhsDefaultAvatarSrc())+'"><label>人物名字<input id="xhsDmPersonName" maxlength="24" placeholder="输入昵称" value="'+esc(c.name)+'"></label><button type="button" class="avatar-pick" id="xhsDmPickAvatar">上传 / 更换头像</button><input id="xhsDmAvatarFile" type="file" accept="image/*" style="display:none"><div class="btns"><button id="xhsDmCancel">取消</button><button class="xhs-publish" id="xhsDmSavePerson">保存</button></div></div>');
+ $('xhsDmPickAvatar').onclick=()=>$('xhsDmAvatarFile').click();
+ $('xhsDmAvatarFile').onchange=async()=>{const file=$('xhsDmAvatarFile').files[0];if(!file)return;try{crop=await xhsOpenCropper(file,'avatar');$('xhsDmAvatarPreview').src=crop}catch(e){if(e.message!=='已取消裁剪')alert(e.message)}};
+ $('xhsDmCancel').onclick=closeModal;
+ $('xhsDmSavePerson').onclick=()=>{
+  const name=$('xhsDmPersonName').value.trim();if(!name)return alert('请填写人物名字');
+  if(id){c.name=name;if(crop)c.avatar=crop}
+  else{const newId='dm-'+Date.now()+'-'+Math.random().toString(36).slice(2,7);xhsData.messageContacts.push({id:newId,name,avatar:crop||''});xhsData.dmChats[newId]=[]}
+  xhsDmSave();closeModal();xhsDmRenderList();
+ };
+}
+function xhsDmBindBlank(){
+ const el=$('xhsMsgBlank');let timer=null,sx=0,sy=0;
+ const clear=()=>{if(timer)clearTimeout(timer);timer=null};
+ el.addEventListener('pointerdown',e=>{clear();sx=e.clientX;sy=e.clientY;timer=setTimeout(()=>{timer=null;xhsDmEditContact(null)},600)});
+ ['pointerup','pointercancel','pointerleave'].forEach(t=>el.addEventListener(t,clear));
+ el.addEventListener('pointermove',e=>{if(timer&&(Math.abs(e.clientX-sx)>12||Math.abs(e.clientY-sy)>12))clear()},{passive:true});
+}
+function xhsDmBindNav(){
+ $('xhsMessage').onclick=xhsDmOpenPage;
+ $('xhsVisitorMessage').onclick=()=>{let c=xhsData.messageContacts.find(v=>v.name===xhsData.visitorProfile.name);if(!c){c={id:'dm-'+Date.now(),name:xhsData.visitorProfile.name||'访客',avatar:xhsData.visitorProfile.avatar||''};xhsData.messageContacts.push(c);xhsData.dmChats[c.id]=[];xhsDmSave()}xhsDmOpenChat(c.id)};
+ document.querySelectorAll('.xhs-bottom').forEach(nav=>{
+  const buttons=nav.querySelectorAll('button');
+  if(buttons[3])buttons[3].onclick=xhsDmOpenPage;
+ });
+ document.querySelectorAll('.xhsMsgGoHome').forEach(b=>b.onclick=()=>{showView('xhsHomeView');renderXhsFeed()});
+ document.querySelectorAll('.xhsMsgGoMe').forEach(b=>b.onclick=()=>setXhsProfileMode('own'));
+ document.querySelectorAll('.xhsMsgPublish').forEach(b=>b.onclick=()=>publishXhs());
+ $('xhsDmBack').onclick=xhsDmOpenPage;
+ $('xhsDmSend').onclick=xhsDmSend;
+ $('xhsDmInput').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();xhsDmSend()}};
+ $('xhsDmEdit').onclick=()=>xhsDmContactMenu(xhsActiveDmId);
+ $('xhsMsgAdd').onclick=()=>xhsDmEditContact(null);
+ $('xhsMsgSearch').onclick=()=>{const q=prompt('搜索聊天人物');if(q!==null){const c=xhsData.messageContacts.find(x=>x.name.toLowerCase().includes(q.trim().toLowerCase()));if(c)xhsDmOpenChat(c.id);else alert('没有找到这个人物')}};
+ document.querySelectorAll('[data-shortcut]').forEach(b=>b.onclick=()=>alert(b.dataset.shortcut==='likes'?'赞和收藏：这里可以继续添加模拟通知。':b.dataset.shortcut==='follows'?'新增关注：这里可以继续添加模拟通知。':'评论和@：这里可以继续添加模拟通知。'));
+ xhsDmBindBlank();
+}
+xhsDmBindNav();
 </script></body></html>
