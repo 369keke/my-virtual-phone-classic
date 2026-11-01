@@ -315,7 +315,7 @@ function renderXhsProfile(){
    const current=Math.max(0,Number(xhsData.profile[key])||0);
    const value=prompt('修改'+label+'数量',String(current));
    if(value===null)return;
-   if(!/^\\d+$/.test(value.trim()))return alert('请输入大于或等于0的整数');
+   if(!/^\d+$/.test(value.trim()))return alert('请输入大于或等于0的整数');
    xhsData.profile[key]=Number(value.trim());saveXhs();renderXhsProfile();
   }));
  }
