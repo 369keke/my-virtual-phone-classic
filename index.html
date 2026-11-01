@@ -446,7 +446,7 @@ function xhsOpenCropper(file,kind){
  return new Promise((resolve,reject)=>{
   if(!file||!file.type.startsWith('image/')){reject(new Error('请选择图片'));return}
   const url=URL.createObjectURL(file),avatar=kind.toLowerCase().includes('avatar');
-  const ratio=avatar?1:2;
+  const ratio=avatar?1:(7/5);
   const frameW=Math.min(340,window.innerWidth-44),frameH=frameW/ratio;
   const overlay=document.createElement('div');overlay.className='xhs-crop-overlay';
   overlay.innerHTML='<div class="xhs-crop-title">'+(avatar?'调整头像':'调整主页背景')+'</div><div class="xhs-crop-frame '+(avatar?'avatar':'')+'" style="width:'+frameW+'px;height:'+frameH+'px"><img draggable="false"></div><div class="xhs-crop-tip">拖动图片调整位置，滑动下方滑块调整大小</div><div class="xhs-crop-controls"><input type="range" min="1" max="3" step=".01" value="1"></div><div class="xhs-crop-actions"><button type="button" class="cancel">取消</button><button type="button" class="save">保存</button></div>';
