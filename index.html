@@ -197,8 +197,28 @@
  </div>
 </section>
 
-<section class="view active launcher" id="launcherView"><div class="launcher-clock" id="launcherClock"></div><div class="launcher-date" id="launcherDate">我的小手机</div><div class="launcher-weather" id="launcherWeather">☀ 点击获取天气</div><div class="launcher-grid"><button class="launcher-app" id="launchWechat"><span class="app-icon wechat">微</span><span>微信</span></button><button class="launcher-app" id="launchXhs"><span class="app-icon red">小</span><span>小红书</span></button></div><div class="launcher-hint">点击应用图标打开</div></section>
-<header class="bar hidden" id="mainbar"><button id="toLauncher" aria-label="返回桌面">⌂</button><h1 id="barTitle">微信</h1><div><button id="addBtn" aria-label="添加">＋</button></div></header>
+<section class="view active launcher" id="launcherView"><div class="launcher-clock" id="launcherClock"></div><div class="launcher-date" id="launcherDate">我的小手机</div><div class="launcher-weather" id="launcherWeather">☀ 点击获取天气</div><div class="launcher-grid"><button class="launcher-app" id="launchWechat"><span class="app-icon wechat">微</span><span>微信</span></button><button class="launcher-app" id="launchXhs"><span class="app-icon red">小</span><span>小红书</span></button><button class="launcher-app" id="launchPhoneSettings"><span class="app-icon" style="background:#8b9aaa">⚙</span><span>设置</span></button></div><div class="launcher-hint">点击应用图标打开</div></section>
+<section class="view" id="phoneSettingsView" style="background:#f5f5f5">
+ <div style="height:54px;display:flex;align-items:center;gap:14px;padding:0 18px;background:#fff;border-bottom:1px solid #eee;flex-shrink:0">
+  <button id="phoneSettingsBack" style="border:0;background:none;font-size:25px">‹</button><b style="font-size:19px">手机设置</b>
+ </div>
+ <div style="padding:18px;overflow:auto">
+  <h3 style="margin:8px 0 14px">个性化</h3>
+  <div class="list" style="border-radius:14px;overflow:hidden">
+   <div style="padding:16px;border-bottom:1px solid #eee">
+    <b>锁屏壁纸</b><p style="font-size:13px;color:#888;margin:6px 0 12px">更换解锁前显示的锁屏背景，不会更改锁屏密码。</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button id="chooseLockWallpaper" style="border:0;border-radius:9px;padding:10px 14px;background:#e8edf3">选择锁屏图片</button><button id="resetLockWallpaper" style="border:0;border-radius:9px;padding:10px 14px;background:#f1f1f1">恢复默认</button></div>
+    <input id="lockWallpaperFile" type="file" accept="image/*" hidden>
+   </div>
+   <div style="padding:16px">
+    <b>桌面壁纸</b><p style="font-size:13px;color:#888;margin:6px 0 12px">更换手机桌面背景，微信和小红书内部页面不受影响。</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button id="chooseHomeWallpaper" style="border:0;border-radius:9px;padding:10px 14px;background:#e8edf3">选择桌面图片</button><button id="resetHomeWallpaper" style="border:0;border-radius:9px;padding:10px 14px;background:#f1f1f1">恢复默认</button></div>
+    <input id="homeWallpaperFile" type="file" accept="image/*" hidden>
+   </div>
+  </div>
+  <p style="font-size:12px;color:#999;line-height:1.6;margin-top:16px">提示：图片保存在当前浏览器设备中。更换壁纸不会修改或重置你的六位数锁屏密码。</p>
+ </div>
+</section><header class="bar hidden" id="mainbar"><button id="toLauncher" aria-label="返回桌面">⌂</button><h1 id="barTitle">微信</h1><div><button id="addBtn" aria-label="添加">＋</button></div></header>
 <section class="view" id="chatsView"><div class="search">⌕　搜索</div><div class="list" id="chatList"></div></section>
 <section class="view" id="contactsView"><div class="list" id="contactList"></div></section>
 <section class="view xhs" id="xhsHomeView"><div class="xhs-top"><button id="xhsMessage">▢</button><button>关注</button><button class="active">发现</button><button>同城</button><button id="xhsSearch">⌕</button></div><div class="xhs-cats"><button>推荐</button><button>RED</button><button>直播</button><button>热点</button><button>短剧</button><button>求助</button></div><div class="xhs-feed" id="xhsFeed"><div class="xhs-empty">这里还没有笔记<br>点击下方「＋」发布你的第一篇笔记</div></div><nav class="xhs-bottom"><button id="xhsHomeTab">首页</button><button>市集</button><button id="xhsPublish" class="xhs-plus" type="button" aria-label="发布笔记">＋</button><button>消息</button><button id="xhsMeTab">我</button></nav></section>
@@ -797,5 +817,44 @@ document.addEventListener('DOMContentLoaded',()=>{
  }
  $id('lockWeather').onclick=getWeather;$id('launcherWeather').onclick=getWeather;
  updateTime();setInterval(updateTime,1000);
+})();
+
+/* Phone wallpaper settings; lock PIN intentionally remains unchanged. */
+(function(){
+ const $=id=>document.getElementById(id);
+ const STORE='classic_phone_wallpapers_v1';
+ const defaults={
+  lock:'linear-gradient(160deg,#d8e4ed,#f1e5e7 58%,#e8e4f2)',
+  home:'linear-gradient(160deg,#d9e5ed,#f2e6e7 58%,#e8e4f2)'
+ };
+ let saved={};try{saved=JSON.parse(localStorage.getItem(STORE)||'{}')||{}}catch(e){}
+ function apply(){
+  $('phoneLockScreen').style.background=saved.lock||defaults.lock;
+  $('launcherView').style.background=saved.home||defaults.home;
+ }
+ function store(key,value){
+  saved[key]=value;
+  try{localStorage.setItem(STORE,JSON.stringify(saved));apply();return true}
+  catch(e){alert('保存失败：图片可能太大，请换一张较小的图片。');return false}
+ }
+ function upload(input,key){
+  input.addEventListener('change',()=>{
+   const file=input.files&&input.files[0];if(!file)return;
+   if(!file.type.startsWith('image/')){alert('请选择图片文件');input.value='';return}
+   if(file.size>5*1024*1024){alert('图片请控制在5MB以内');input.value='';return}
+   const reader=new FileReader();
+   reader.onload=()=>{if(store(key,reader.result))alert('壁纸已更换');input.value=''};
+   reader.onerror=()=>{alert('图片读取失败');input.value=''};
+   reader.readAsDataURL(file);
+  });
+ }
+ $('launchPhoneSettings').addEventListener('click',()=>showView('phoneSettingsView'));
+ $('phoneSettingsBack').addEventListener('click',()=>showView('launcherView'));
+ $('chooseLockWallpaper').onclick=()=>$('lockWallpaperFile').click();
+ $('chooseHomeWallpaper').onclick=()=>$('homeWallpaperFile').click();
+ $('resetLockWallpaper').onclick=()=>{delete saved.lock;localStorage.setItem(STORE,JSON.stringify(saved));apply()};
+ $('resetHomeWallpaper').onclick=()=>{delete saved.home;localStorage.setItem(STORE,JSON.stringify(saved));apply()};
+ upload($('lockWallpaperFile'),'lock');upload($('homeWallpaperFile'),'home');
+ apply();
 })();
 </script></body></html>
